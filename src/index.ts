@@ -72,7 +72,8 @@ export default {
 				justify-content: center;
 				width: 100%;
 				height: 100%;
-				margin: 4px;
+				padding: 4px;
+				box-sizing: border-box;
 			}
 
 			#streams iframe {
@@ -149,7 +150,7 @@ export default {
 			headers: {
 				'content-type': 'text/html; charset=utf-8',
 				'content-security-policy':
-					"base-uri 'self'; default-src 'self'; script-src 'sha256-U160DvPGXujTUZWQ65Ec6OgBoQN3N28nqXcQs/2epBU='; style-src 'sha256-Qn8ClIDDYV+wiNDpLE7srY5SPxIj1SosKJx1MtQBo3o='; frame-src 'self' https://chzzk.naver.com https://player.twitch.tv https://play.afreecatv.com",
+					"base-uri 'self'; default-src 'self'; script-src 'sha256-U160DvPGXujTUZWQ65Ec6OgBoQN3N28nqXcQs/2epBU='; style-src 'sha256-dfZKFko7NF0OigRBMb2W6/GRvcr3u+TLbQSWTo3OFPc='; frame-src 'self' https://chzzk.naver.com https://player.twitch.tv https://play.afreecatv.com",
 				'strict-transport-security': 'max-age=31536000; includeSubDomains',
 				'x-content-type-options': 'nosniff',
 			},
