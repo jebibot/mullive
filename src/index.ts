@@ -27,6 +27,132 @@ export interface Env {
 
 export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-		return new Response('Hello World!');
+		const url = new URL(request.url);
+		if (url.hostname !== 'multichzzk.tv') {
+			return Response.redirect(`https://multichzzk.tv${url.pathname}`, 301);
+		}
+		if (url.pathname.includes('.')) {
+			return new Response('Not Found', { status: 404 });
+		}
+		const stream = url.pathname
+			.split('/')
+			.map((s) => {
+				s = s.toLowerCase();
+				if (s.match(/^[0-9a-f]{32}$/)) {
+					return `https://chzzk.naver.com/live/${s}`;
+				} else if (s.match(/^[a-z0-9_]{4,25}$/)) {
+					return `https://player.twitch.tv/?channel=${s}&parent=${url.hostname}`;
+				} else if (s.startsWith('a:') && s.slice(2).match(/^[a-z0-9]{6,12}$/)) {
+					return `https://play.afreecatv.com/${s.slice(2)}/embed`;
+				}
+			})
+			.filter(Boolean);
+		const html = `<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="utf-8" />
+		<title>multichzzk</title>
+		<style>
+			html,
+			body {
+				margin: 0;
+				padding: 0;
+				width: 100%;
+				height: 100%;
+				color: white;
+				background-color: black;
+				overflow: hidden;
+			}
+
+			#streams {
+				display: flex;
+				flex-wrap: wrap;
+				align-items: center;
+				align-content: center;
+				justify-content: center;
+				width: 100%;
+				height: 100%;
+				margin: 4px;
+			}
+
+			#streams iframe {
+				flex-grow: 1;
+				aspect-ratio: 16 / 9;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="streams">${
+			stream.length > 0
+				? stream
+						.map(
+							(s) =>
+								`
+			<iframe
+				src=${JSON.stringify(s)}
+				frameborder="0"
+				scrolling="no"
+				allowfullscreen="true"
+			></iframe>`,
+						)
+						.join('')
+				: `
+			<div>
+			<h1>MultiChzzk.tv</h1>
+			<div>여러 방송을 함께 볼 수 있습니다.</div>
+			<ul>
+				<li>치지직 UID</li>
+				<li>트위치 아이디</li>
+				<li>a:아프리카TV 아이디</li>
+			</ul>
+			<div><b>예시:</b> https://multichzzk.tv/abcdef1234567890abcdef1234567890/twitch/a:afreeca</div>
+			</div>`
+		}
+		</div>
+		<script type="text/javascript">
+			function adjustLayout() {
+				const streams = document.querySelectorAll("iframe");
+				const n = streams.length;
+				const height = window.innerHeight - 8;
+				const width = window.innerWidth - 8;
+
+				let bestHeight = 0;
+				let bestWidth = 0;
+				for (let cols = 1; cols <= n; cols++) {
+					const rows = Math.ceil(n / cols);
+					let maxWidth = Math.floor(width / cols);
+					let maxHeight = Math.floor(height / rows);
+					if ((maxWidth * 9) / 16 < maxHeight) {
+						maxHeight = (maxWidth * 9) / 16;
+					} else {
+						maxWidth = (maxHeight * 16) / 9;
+					}
+					if (maxWidth > bestWidth) {
+						bestWidth = maxWidth;
+						bestHeight = maxHeight;
+					}
+				}
+				streams.forEach((s) => {
+					s.style.flexGrow = 0;
+					s.style.width = \`\${Math.floor(bestWidth)}px\`;
+					s.style.height = \`\${Math.floor(bestHeight)}px\`;
+				});
+			}
+
+			adjustLayout();
+			window.addEventListener("resize", adjustLayout);
+		</script>
+	</body>
+</html>
+`;
+		return new Response(html, {
+			headers: {
+				'content-type': 'text/html; charset=utf-8',
+				'content-security-policy':
+					"base-uri 'self'; default-src 'self'; script-src 'sha256-U160DvPGXujTUZWQ65Ec6OgBoQN3N28nqXcQs/2epBU='; style-src 'sha256-Qn8ClIDDYV+wiNDpLE7srY5SPxIj1SosKJx1MtQBo3o='; frame-src 'self' https://chzzk.naver.com https://player.twitch.tv https://play.afreecatv.com",
+				'strict-transport-security': 'max-age=31536000; includeSubDomains',
+				'x-content-type-options': 'nosniff',
+			},
+		});
 	},
 };
