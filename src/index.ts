@@ -101,12 +101,12 @@ export default {
 			<div>
 			<h1>MultiChzzk.tv</h1>
 			<div>여러 방송을 함께 볼 수 있습니다.</div>
-			<ul>
-				<li>치지직 UID</li>
-				<li>트위치 아이디</li>
-				<li>a:아프리카TV 아이디</li>
-			</ul>
-			<div><b>예시:</b> https://multichzzk.tv/abcdef1234567890abcdef1234567890/twitch/a:afreeca</div>
+				<ul>
+					<li>치지직 UID</li>
+					<li>트위치 아이디</li>
+					<li>a:아프리카TV 아이디</li>
+				</ul>
+				<div><b>예시:</b> https://multichzzk.tv/abcdef1234567890abcdef1234567890/twitch/a:afreeca</div>
 			</div>`
 		}
 		</div>
@@ -114,11 +114,11 @@ export default {
 			function adjustLayout() {
 				const streams = document.querySelectorAll("iframe");
 				const n = streams.length;
-				const height = window.innerHeight - 8;
 				const width = window.innerWidth - 8;
+				const height = window.innerHeight - 8;
 
-				let bestHeight = 0;
 				let bestWidth = 0;
+				let bestHeight = 0;
 				for (let cols = 1; cols <= n; cols++) {
 					const rows = Math.ceil(n / cols);
 					let maxWidth = Math.floor(width / cols);
@@ -150,7 +150,7 @@ export default {
 			headers: {
 				'content-type': 'text/html; charset=utf-8',
 				'content-security-policy':
-					"base-uri 'self'; default-src 'self'; script-src 'sha256-U160DvPGXujTUZWQ65Ec6OgBoQN3N28nqXcQs/2epBU='; style-src 'sha256-dfZKFko7NF0OigRBMb2W6/GRvcr3u+TLbQSWTo3OFPc='; frame-src 'self' https://chzzk.naver.com https://player.twitch.tv https://play.afreecatv.com",
+					"base-uri 'self'; default-src 'self'; script-src 'sha256-2EFxWolO8muS3g594RvfuM+wVNl6AMiTcpnmsHj9hpo='; style-src 'sha256-dfZKFko7NF0OigRBMb2W6/GRvcr3u+TLbQSWTo3OFPc='; frame-src 'self' chzzk.naver.com *.chzzk.naver.com *.twitch.tv *.afreecatv.com; object-src 'none'",
 				'strict-transport-security': 'max-age=31536000; includeSubDomains',
 				'x-content-type-options': 'nosniff',
 			},
