@@ -70,25 +70,23 @@ export default {
 		const stream = url.pathname
 			.split('/')
 			.map((s) => {
-				if (s.startsWith('y:') && s.slice(2).match(/^[a-zA-Z0-9_\-]{11}$/)) {
+				if (/^[0-9a-f]{32}$/i.test(s)) {
+					return { name: s.substring(0, 6), player: `https://chzzk.naver.com/live/${s}`, chat: `https://chzzk.naver.com/live/${s}/chat` };
+				} else if (/^[a-z0-9_]{4,25}$/i.test(s)) {
+					return {
+						name: s,
+						player: `https://player.twitch.tv/?channel=${s}&parent=${url.hostname}`,
+						chat: `https://www.twitch.tv/embed/${s}/chat?darkpopout&parent=${url.hostname}`,
+					};
+				} else if (/^a:[a-z0-9]{3,12}$/i.test(s)) {
+					return { player: `https://play.afreecatv.com/${s.slice(2)}/embed` };
+				} else if (/^y:[a-zA-Z0-9_\-]{11}$/.test(s)) {
 					s = s.slice(2);
 					return {
 						name: s,
 						player: `https://www.youtube.com/embed/${s}?autoplay=1`,
 						chat: `https://www.youtube.com/live_chat?v=${s}&embed_domain=${url.hostname}&dark_theme=1`,
 					};
-				}
-				s = s.toLowerCase();
-				if (s.match(/^[0-9a-f]{32}$/)) {
-					return { name: s.substring(0, 6), player: `https://chzzk.naver.com/live/${s}`, chat: `https://chzzk.naver.com/live/${s}/chat` };
-				} else if (s.match(/^[a-z0-9_]{4,25}$/)) {
-					return {
-						name: s,
-						player: `https://player.twitch.tv/?channel=${s}&parent=${url.hostname}`,
-						chat: `https://www.twitch.tv/embed/${s}/chat?darkpopout&parent=${url.hostname}`,
-					};
-				} else if (s.startsWith('a:') && s.slice(2).match(/^[a-z0-9]{3,12}$/)) {
-					return { player: `https://play.afreecatv.com/${s.slice(2)}/embed` };
 				}
 			})
 			.filter(isNotUndefined);
@@ -100,10 +98,10 @@ export default {
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>MultiChzzk.tv</title>
-		<link rel="icon" href="/favicon.ico" sizes="32x32">
-		<link rel="icon" href="/icon.svg" type="image/svg+xml">
-		<link rel="apple-touch-icon" href="/apple-touch-icon.png">
-		<link rel="manifest" href="/manifest.webmanifest">
+		<link rel="icon" href="/favicon.ico" sizes="32x32" />
+		<link rel="icon" href="/icon.svg" type="image/svg+xml" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+		<link rel="manifest" href="/manifest.webmanifest" />
 		<style>
 			html,
 			body {
@@ -143,7 +141,7 @@ export default {
 				height: 100%;
 			}
 
-			#links {
+			#chats {
 				position: fixed;
 				top: 0;
 				right: 0;
@@ -155,69 +153,51 @@ export default {
 				transition: opacity 150ms ease-in-out;
 			}
 
-			#links:hover {
+			#chats:hover {
 				opacity: 1;
 			}
 
-			#links a {
+			#chats a {
 				color: #ddd;
 				text-decoration: none;
 			}
 
-			#links a:hover {
+			#chats a:hover {
 				color: #fff;
 			}
 		</style>
 	</head>
 	<body>
 		<div class="container">
-			<div id="streams">${
-				stream.length > 0
-					? stream
-							.map(
-								(s) =>
-									`
-				<iframe
-					src=${JSON.stringify(s!.player)}
-					frameborder="0"
-					scrolling="no"
-					allowfullscreen="true"
-				></iframe>`,
-							)
-							.join('')
-					: `
-				<div>
-				<h1>MultiChzzk.tv</h1>
-				<div>여러 방송을 함께 볼 수 있습니다.</div>
+			<div id="streams">
+				${
+					stream.length > 0
+						? stream
+								.map((s) => `<iframe src=${JSON.stringify(s!.player)} frameborder="0" scrolling="no" allowfullscreen="true"></iframe>`)
+								.join('\n\t\t\t\t')
+						: `<div>
+					<h1>MultiChzzk.tv</h1>
+					<div>여러 방송을 함께 볼 수 있습니다.</div>
 					<ul>
 						<li>치지직 UID</li>
 						<li>Twitch 아이디</li>
 						<li>a:아프리카TV 아이디</li>
 						<li>y:YouTube 영상 아이디</li>
 					</ul>
-					<div><b>예시:</b> https://multichzzk.tv/abcdef1234567890abcdef1234567890/twitch/a:afreeca/y:youtube</div>
+					<div><b>예시:</b> https://multichzzk.tv/abcdef1234567890abcdef1234567890/twitch/a:afreeca/y:youtube-_id</div>
 				</div>`
-			}
+				}
 			</div>
-			<iframe
-				src=${JSON.stringify(chats[0].chat)}
-				frameborder="0"
-				scrolling="no"
-				id="chat"
-				name="chat"
-			></iframe>
+			<iframe src=${JSON.stringify(chats[0].chat)} frameborder="0" scrolling="no" id="chat" name="chat"></iframe>
 		</div>
-		<div id="links">${chats
-			.map(
-				(s) => `
-			<a href=${JSON.stringify(s.chat)} target="chat">${s!.name}</a>`,
-			)
-			.join(' |')}
+		<div id="chats">
+			${chats.map((s) => `<a href=${JSON.stringify(s.chat)} target="chat">${s!.name}</a>`).join(' |\n\t\t\t')}
 		</div>
 		<script type="text/javascript">
 		  const streams = document.getElementById("streams");
 		  const chat = document.getElementById("chat");
 			const frames = streams.querySelectorAll("iframe");
+			const n = frames.length;
 			function adjustLayout() {
 				let isChatOpen = true;
 				try {
@@ -225,7 +205,6 @@ export default {
 				} catch {}
 				chat.style.display = isChatOpen ? "block" : "none";
 
-				const n = frames.length;
 				const width = window.innerWidth - 8 - (isChatOpen ? 350 : 0);
 				const height = window.innerHeight - 8;
 
@@ -236,9 +215,9 @@ export default {
 					let maxWidth = Math.floor(width / cols);
 					let maxHeight = Math.floor(height / rows);
 					if ((maxWidth * 9) / 16 < maxHeight) {
-						maxHeight = (maxWidth * 9) / 16;
+						maxHeight = Math.floor((maxWidth * 9) / 16);
 					} else {
-						maxWidth = (maxHeight * 16) / 9;
+						maxWidth = Math.floor((maxHeight * 16) / 9);
 					}
 					if (maxWidth > bestWidth) {
 						bestWidth = maxWidth;
@@ -247,8 +226,8 @@ export default {
 				}
 				frames.forEach((f) => {
 					f.style.flexGrow = 0;
-					f.style.width = \`\${Math.floor(bestWidth)}px\`;
-					f.style.height = \`\${Math.floor(bestHeight)}px\`;
+					f.style.width = \`\${bestWidth}px\`;
+					f.style.height = \`\${bestHeight}px\`;
 				});
 			}
 
@@ -263,7 +242,7 @@ export default {
 			headers: {
 				'content-type': 'text/html; charset=utf-8',
 				'content-security-policy':
-					"base-uri 'self'; default-src 'self'; script-src 'sha256-KcCi08iqwmQp1GEyq8W5KI1A9sLLG3AoyroaunlNFSw='; style-src 'sha256-MKR4twFRP/r+C0gLBHAiGaJsd1xQ7W6pIMO4vDEOxTI='; frame-src 'self' chzzk.naver.com *.chzzk.naver.com *.twitch.tv *.afreecatv.com www.youtube.com; object-src 'none'",
+					"base-uri 'self'; default-src 'self'; script-src 'sha256-vFvB+nznXOTKnIktnYN87qOm2fFxx6/5g3AF9PT7Pa0='; style-src 'sha256-N8IjiM2XUSVzLDHaWk5ztB66Pl3+ozn9diQDsTMYWPU='; frame-src 'self' chzzk.naver.com *.chzzk.naver.com *.twitch.tv *.afreecatv.com www.youtube.com; object-src 'none'",
 				'strict-transport-security': 'max-age=31536000; includeSubDomains',
 				'x-content-type-options': 'nosniff',
 			},
