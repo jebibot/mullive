@@ -150,12 +150,11 @@ export default {
 				padding: 4px;
 				border-radius: 4px;
 				background-color: rgba(0, 0, 0, 0.8);
-				opacity: 0;
 				transition: opacity 150ms ease-in-out;
 			}
 
 			#chats:hover {
-				opacity: 1;
+				opacity: 1 !important;
 			}
 
 			#chats a {
@@ -235,6 +234,9 @@ export default {
 			adjustLayout();
 			window.addEventListener("resize", adjustLayout);
 			chat.addEventListener("load", adjustLayout);
+			setTimeout(() => {
+				document.getElementById("chats").style.opacity = 0;
+			}, 10000);
 		</script>
 	</body>
 </html>
@@ -243,7 +245,7 @@ export default {
 			headers: {
 				'content-type': 'text/html; charset=utf-8',
 				'content-security-policy':
-					"base-uri 'self'; default-src 'self'; script-src 'sha256-vFvB+nznXOTKnIktnYN87qOm2fFxx6/5g3AF9PT7Pa0='; style-src 'sha256-N8IjiM2XUSVzLDHaWk5ztB66Pl3+ozn9diQDsTMYWPU='; frame-src 'self' chzzk.naver.com *.chzzk.naver.com *.twitch.tv *.afreecatv.com www.youtube.com; object-src 'none'",
+					"base-uri 'self'; default-src 'self'; script-src 'sha256-PytDF6/6Nq4SqjAaxoatf/sO5c8ggEFdbIs5X2DF+B8='; style-src 'sha256-9ijFY937SYJ+Rko4+vpDQdVee8i1F8PB2gXnfLfJsww='; frame-src 'self' chzzk.naver.com *.chzzk.naver.com *.twitch.tv *.afreecatv.com www.youtube.com; object-src 'none'",
 				'strict-transport-security': 'max-age=31536000; includeSubDomains',
 				'x-content-type-options': 'nosniff',
 			},
