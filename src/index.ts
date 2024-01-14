@@ -97,6 +97,7 @@ export default {
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="description" content="여러 치지직, 트위치, 아프리카TV, 유튜브 방송을 함께 볼 수 있습니다." />
 		<title>MultiChzzk.tv</title>
 		<link rel="icon" href="/favicon.ico" sizes="32x32" />
 		<link rel="icon" href="/icon.svg" type="image/svg+xml" />
@@ -177,7 +178,7 @@ export default {
 								.join('\n\t\t\t\t')
 						: `<div>
 					<h1>MultiChzzk.tv</h1>
-					<div>여러 방송을 함께 볼 수 있습니다.</div>
+					<div>여러 치지직, 트위치, 아프리카TV, 유튜브 방송을 함께 볼 수 있습니다.</div>
 					<ul>
 						<li>치지직 UID</li>
 						<li>Twitch 아이디</li>
