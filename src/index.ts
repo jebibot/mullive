@@ -115,6 +115,15 @@ export default {
 				overflow: hidden;
 			}
 
+			a {
+				color: #ddd;
+				text-decoration: none;
+			}
+
+			a:hover {
+				color: #fff;
+			}
+
 			.container {
 				display: flex;
 				width: 100%;
@@ -157,13 +166,8 @@ export default {
 				opacity: 1 !important;
 			}
 
-			#chats a {
-				color: #ddd;
-				text-decoration: none;
-			}
-
-			#chats a:hover {
-				color: #fff;
+			#links {
+				margin-top: 16px;
 			}
 		</style>
 	</head>
@@ -185,6 +189,11 @@ export default {
 						<li>y:YouTube 영상 아이디</li>
 					</ul>
 					<div><b>예시:</b> https://multichzzk.tv/abcdef1234567890abcdef1234567890/twitch/a:afreeca/y:youtube-_id</div>
+					<div id="links">
+						<a href="https://www.chz.app/" target="_blank">Website</a> |
+						<a href="https://discord.gg/9kq3UNKAkz" target="_blank">Discord</a> |
+						<a href="https://www.chz.app/privacy" target="_blank">개인정보처리방침</a>
+					</div>
 				</div>`
 				}
 			</div>
@@ -245,7 +254,7 @@ export default {
 			headers: {
 				'content-type': 'text/html; charset=utf-8',
 				'content-security-policy':
-					"base-uri 'self'; default-src 'self'; script-src 'sha256-PytDF6/6Nq4SqjAaxoatf/sO5c8ggEFdbIs5X2DF+B8='; style-src 'sha256-9ijFY937SYJ+Rko4+vpDQdVee8i1F8PB2gXnfLfJsww='; frame-src 'self' chzzk.naver.com *.chzzk.naver.com *.twitch.tv *.afreecatv.com www.youtube.com; object-src 'none'",
+					"base-uri 'self'; default-src 'self'; script-src 'sha256-PytDF6/6Nq4SqjAaxoatf/sO5c8ggEFdbIs5X2DF+B8='; style-src 'sha256-ZE0IGAzdbmobsFewX4/LUUAfAHTei3M+Y8dYWFgPmgk='; frame-src 'self' chzzk.naver.com *.chzzk.naver.com *.twitch.tv *.afreecatv.com www.youtube.com; object-src 'none'",
 				'strict-transport-security': 'max-age=31536000; includeSubDomains',
 				'x-content-type-options': 'nosniff',
 			},
