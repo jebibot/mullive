@@ -90,7 +90,11 @@ export default {
 				}
 			})
 			.filter(isNotUndefined);
+		const extension = request.headers.get('user-agent')?.includes('Firefox')
+			? 'https://addons.mozilla.org/addon/mullive/'
+			: 'https://chromewebstore.google.com/detail/pahcphmhihleneomklgfbbneokhjiaim';
 		const chats = stream.filter((s) => s.chat);
+		chats.push({ name: '로그인', player: '', chat: extension });
 		chats.push({ name: '닫기', player: '', chat: 'about:blank' });
 		const html = `<!DOCTYPE html>
 <html lang="ko">
@@ -191,16 +195,17 @@ export default {
 					<div><b>예시:</b> https://mul.live/abcdef1234567890abcdef1234567890/twitch/a:afreeca/y:youtube-_id</div>
 					<div id="links">
 						<a href="https://www.chz.app/" target="_blank">Website</a> |
+						<a href="${extension}" target="_blank">Extension</a> |
 						<a href="https://discord.gg/9kq3UNKAkz" target="_blank">Discord</a> |
 						<a href="https://www.chz.app/privacy" target="_blank">개인정보처리방침</a>
 					</div>
 				</div>`
 				}
 			</div>
-			<iframe src=${JSON.stringify(chats[0].chat)} frameborder="0" scrolling="no" id="chat" name="chat"></iframe>
+			<iframe src=${chats.length > 2 ? JSON.stringify(chats[0].chat) : 'about:blank'} frameborder="0" scrolling="no" id="chat" name="chat"></iframe>
 		</div>
 		<div id="chats">
-			${chats.map((s) => `<a href=${JSON.stringify(s.chat)} target="chat">${s!.name}</a>`).join(' |\n\t\t\t')}
+			${chats.map((s) => `<a href=${JSON.stringify(s.chat)} target="${s.name === '로그인' ? '_blank' : 'chat'}">${s!.name}</a>`).join(' |\n\t\t\t')}
 		</div>
 		<script type="text/javascript">
 		  const streams = document.getElementById("streams");
