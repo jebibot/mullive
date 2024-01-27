@@ -35,8 +35,8 @@ export default {
 		if (!ALLOWED_METHODS.includes(request.method)) {
 			return new Response('Method Not Allowed', { status: 405, headers: { Allow: ALLOWED_METHODS.join(', ') } });
 		}
-		if (url.hostname !== 'multichzzk.tv') {
-			return Response.redirect(`https://multichzzk.tv${url.pathname}`, 301);
+		if (url.hostname !== 'mul.live') {
+			return Response.redirect(`https://mul.live${url.pathname}`, 301);
 		}
 		if (request.method === 'OPTIONS') {
 			return new Response(null, { status: 204, headers: { Allow: ALLOWED_METHODS.join(', ') } });
@@ -98,7 +98,7 @@ export default {
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="description" content="여러 치지직, 트위치, 아프리카TV, 유튜브 방송을 함께 볼 수 있습니다." />
-		<title>MultiChzzk.tv</title>
+		<title>Mul.Live</title>
 		<link rel="icon" href="/favicon.ico" sizes="32x32" />
 		<link rel="icon" href="/icon.svg" type="image/svg+xml" />
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -180,7 +180,7 @@ export default {
 								.map((s) => `<iframe src=${JSON.stringify(s!.player)} frameborder="0" scrolling="no" allowfullscreen="true"></iframe>`)
 								.join('\n\t\t\t\t')
 						: `<div>
-					<h1>MultiChzzk.tv</h1>
+					<h1>Mul.Live</h1>
 					<div>여러 치지직, 트위치, 아프리카TV, 유튜브 방송을 함께 볼 수 있습니다.</div>
 					<ul>
 						<li>치지직 UID</li>
@@ -188,7 +188,7 @@ export default {
 						<li>a:아프리카TV 아이디</li>
 						<li>y:YouTube 영상 아이디</li>
 					</ul>
-					<div><b>예시:</b> https://multichzzk.tv/abcdef1234567890abcdef1234567890/twitch/a:afreeca/y:youtube-_id</div>
+					<div><b>예시:</b> https://mul.live/abcdef1234567890abcdef1234567890/twitch/a:afreeca/y:youtube-_id</div>
 					<div id="links">
 						<a href="https://www.chz.app/" target="_blank">Website</a> |
 						<a href="https://discord.gg/9kq3UNKAkz" target="_blank">Discord</a> |
