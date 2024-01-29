@@ -67,29 +67,52 @@ export default {
 			return new Response(body, { headers, status });
 		}
 
-		const stream = url.pathname
-			.split('/')
-			.map((s) => {
-				if (/^[0-9a-f]{32}$/i.test(s)) {
-					return { name: s.substring(0, 6), player: `https://chzzk.naver.com/live/${s}`, chat: `https://chzzk.naver.com/live/${s}/chat` };
-				} else if (/^[a-z0-9_]{4,25}$/i.test(s)) {
-					return {
-						name: s,
-						player: `https://player.twitch.tv/?channel=${s}&parent=${url.hostname}`,
-						chat: `https://www.twitch.tv/embed/${s}/chat?darkpopout&parent=${url.hostname}`,
-					};
-				} else if (/^a:[a-z0-9]{3,12}$/i.test(s)) {
-					return { player: `https://play.afreecatv.com/${s.slice(2)}/embed` };
-				} else if (/^y:[a-zA-Z0-9_\-]{11}$/.test(s)) {
-					s = s.slice(2);
-					return {
-						name: s,
-						player: `https://www.youtube.com/embed/${s}?autoplay=1`,
-						chat: `https://www.youtube.com/live_chat?v=${s}&embed_domain=${url.hostname}&dark_theme=1`,
-					};
-				}
-			})
-			.filter(isNotUndefined);
+		const stream = (
+			await Promise.all(
+				url.pathname.split('/').map(async (s) => {
+					if (/^[0-9a-f]{32}$/i.test(s)) {
+						return { name: s.substring(0, 6), player: `https://chzzk.naver.com/live/${s}`, chat: `https://chzzk.naver.com/live/${s}/chat` };
+					} else if (/^[a-z0-9_]{4,25}$/i.test(s)) {
+						return {
+							name: s,
+							player: `https://player.twitch.tv/?channel=${s}&parent=${url.hostname}`,
+							chat: `https://www.twitch.tv/embed/${s}/chat?darkpopout&parent=${url.hostname}`,
+						};
+					} else if (/^a:[a-z0-9]{3,12}$/i.test(s)) {
+						return { player: `https://play.afreecatv.com/${s.slice(2)}/embed` };
+					} else if (s.startsWith('y:')) {
+						s = s.slice(2);
+						if (!/^[a-zA-Z0-9_\-]{11}$/.test(s)) {
+							let channel = '';
+							if (/^UC[a-zA-Z0-9_\-]{22}$/.test(s)) {
+								channel = `channel/${s}`;
+							} else if (/^@[a-zA-Z0-9_\-]{3,30}$/.test(s)) {
+								channel = s;
+							} else if (/^[a-zA-Z0-9]{1,100}$/.test(s)) {
+								channel = `c/${s}`;
+							} else {
+								return;
+							}
+							const live = await fetch(`https://www.youtube.com/${channel}/live`, { redirect: 'follow' });
+							if (!live.ok) {
+								return;
+							}
+							const html = await live.text();
+							const match = html.match(/<link rel="canonical" href="https:\/\/www\.youtube\.com\/watch\?v=([a-zA-Z0-9_\-]{11})"/);
+							if (!match) {
+								return;
+							}
+							s = match[1];
+						}
+						return {
+							name: s,
+							player: `https://www.youtube.com/embed/${s}?autoplay=1`,
+							chat: `https://www.youtube.com/live_chat?v=${s}&embed_domain=${url.hostname}&dark_theme=1`,
+						};
+					}
+				}),
+			)
+		).filter(isNotUndefined);
 		const extension = request.headers.get('user-agent')?.includes('Firefox')
 			? 'https://addons.mozilla.org/addon/mullive/'
 			: 'https://chromewebstore.google.com/detail/pahcphmhihleneomklgfbbneokhjiaim';
@@ -190,9 +213,9 @@ export default {
 						<li>치지직 UID</li>
 						<li>Twitch 아이디</li>
 						<li>a:아프리카TV 아이디</li>
-						<li>y:YouTube 영상 아이디</li>
+						<li>y:YouTube 핸들, 맞춤 URL, 채널 또는 영상 ID</li>
 					</ul>
-					<div><b>예시:</b> https://mul.live/abcdef1234567890abcdef1234567890/twitch/a:afreeca/y:youtube-_id</div>
+					<div><b>예시:</b> https://mul.live/abcdef1234567890abcdef1234567890/twitch/a:afreeca/y:@youtube</div>
 					<div id="links">
 						<a href="https://www.chz.app/" target="_blank">Website</a> |
 						<a href="${extension}" target="_blank">Extension</a> |
