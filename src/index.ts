@@ -193,6 +193,10 @@ export default {
 				opacity: 1 !important;
 			}
 
+			#chats a:not(:last-child)::after {
+				content: " | ";
+			}
+
 			#links {
 				margin-top: 16px;
 			}
@@ -228,7 +232,7 @@ export default {
 			<iframe src=${chats.length > 2 ? JSON.stringify(chats[0].chat) : 'about:blank'} frameborder="0" scrolling="no" id="chat" name="chat"></iframe>
 		</div>
 		<div id="chats">
-			${chats.map((s) => `<a href=${JSON.stringify(s.chat)} target="${s.name === '로그인' ? '_blank' : 'chat'}">${s!.name}</a>`).join(' |\n\t\t\t')}
+			${chats.map((s) => `<a href=${JSON.stringify(s.chat)} target="${s.name === '로그인' ? '_blank' : 'chat'}">${s!.name}</a>`).join('\n\t\t\t')}
 		</div>
 		<script type="text/javascript">
 		  const streams = document.getElementById("streams");
@@ -282,7 +286,7 @@ export default {
 			headers: {
 				'content-type': 'text/html; charset=utf-8',
 				'content-security-policy':
-					"base-uri 'self'; default-src 'self'; script-src 'sha256-PytDF6/6Nq4SqjAaxoatf/sO5c8ggEFdbIs5X2DF+B8='; style-src 'sha256-ZE0IGAzdbmobsFewX4/LUUAfAHTei3M+Y8dYWFgPmgk='; frame-src 'self' chzzk.naver.com *.chzzk.naver.com *.twitch.tv *.afreecatv.com www.youtube.com; object-src 'none'",
+					"base-uri 'self'; default-src 'self'; script-src 'sha256-PytDF6/6Nq4SqjAaxoatf/sO5c8ggEFdbIs5X2DF+B8='; style-src 'sha256-epFF8TVnPcenZvj4oCbfX4aZutMP9nTmMgtplGnY6s8='; frame-src 'self' chzzk.naver.com *.chzzk.naver.com *.twitch.tv *.afreecatv.com www.youtube.com; object-src 'none'",
 				'strict-transport-security': 'max-age=31536000; includeSubDomains',
 				'x-content-type-options': 'nosniff',
 			},
