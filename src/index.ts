@@ -125,7 +125,8 @@ export default {
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="description" content="여러 치지직, 트위치, 아프리카TV, 유튜브 방송을 함께 볼 수 있습니다." />
-		<title>Mul.Live</title>
+		<meta name="keywords" content="트위치,Twitch,치지직,CHZZK,아프리카TV,AfreecaTV,유튜브,YouTube,스트리머,streamer,BJ,멀티뷰,multiview,multistream" />
+		<title>Mul.Live - 멀티뷰</title>
 		<link rel="icon" href="/favicon.ico" sizes="32x32" />
 		<link rel="icon" href="/icon.svg" type="image/svg+xml" />
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -211,7 +212,7 @@ export default {
 								.map((s) => `<iframe src=${JSON.stringify(s!.player)} frameborder="0" scrolling="no" allowfullscreen="true"></iframe>`)
 								.join('\n\t\t\t\t')
 						: `<div>
-					<h1>Mul.Live</h1>
+					<h1>Mul.Live - 멀티뷰</h1>
 					<div>여러 치지직, 트위치, 아프리카TV, 유튜브 방송을 함께 볼 수 있습니다.</div>
 					<ul>
 						<li>치지직 UID</li>
