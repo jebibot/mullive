@@ -223,6 +223,7 @@ export default {
 					<div><b>예시:</b> https://mul.live/abcdef1234567890abcdef1234567890/twitch/a:afreeca/y:@youtube</div>
 					<div id="links">
 						<a href="https://www.chz.app/" target="_blank">Website</a> |
+						<a href="https://github.com/jebibot/mullive" target="_blank">GitHub</a> |
 						<a href="${extension}" target="_blank">Extension</a> |
 						<a href="https://discord.gg/9kq3UNKAkz" target="_blank">Discord</a> |
 						<a href="https://www.chz.app/privacy" target="_blank">개인정보처리방침</a>
