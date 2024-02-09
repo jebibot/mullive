@@ -277,6 +277,11 @@ export default {
 			adjustLayout();
 			window.addEventListener("resize", adjustLayout);
 			chat.addEventListener("load", adjustLayout);
+			document.addEventListener('securitypolicyviolation', (e) => {
+				if (e.blockedURI === 'https://nid.naver.com') {
+					window.open('https://nid.naver.com/nidlogin.login');
+				}
+			});
 			setTimeout(() => {
 				document.getElementById("chats").style.opacity = 0;
 			}, 10000);
@@ -288,7 +293,7 @@ export default {
 			headers: {
 				'content-type': 'text/html; charset=utf-8',
 				'content-security-policy':
-					"base-uri 'self'; default-src 'self'; script-src 'sha256-PytDF6/6Nq4SqjAaxoatf/sO5c8ggEFdbIs5X2DF+B8='; style-src 'sha256-epFF8TVnPcenZvj4oCbfX4aZutMP9nTmMgtplGnY6s8='; frame-src 'self' chzzk.naver.com *.chzzk.naver.com *.twitch.tv *.afreecatv.com www.youtube.com; object-src 'none'",
+					"base-uri 'self'; default-src 'self'; script-src 'sha256-pWW0O5dSvnf32VbLWTJzwENlQgDbJL53vzCCbv4x7bQ='; style-src 'sha256-epFF8TVnPcenZvj4oCbfX4aZutMP9nTmMgtplGnY6s8='; frame-src 'self' chzzk.naver.com *.chzzk.naver.com *.twitch.tv *.afreecatv.com www.youtube.com; object-src 'none'",
 				'strict-transport-security': 'max-age=31536000; includeSubDomains',
 				'x-content-type-options': 'nosniff',
 			},
