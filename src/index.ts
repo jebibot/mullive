@@ -80,6 +80,8 @@ export default {
 						};
 					} else if (/^a:[a-z0-9]{3,12}$/i.test(s)) {
 						return { player: `https://play.afreecatv.com/${s.slice(2)}/embed` };
+					} else if (/^ac:[a-z0-9]{3,12}$/i.test(s)) {
+						return { player: `https://play.afreecatv.com/${s.slice(3)}` };
 					} else if (s.startsWith('y:')) {
 						s = s.slice(2);
 						if (!/^[a-zA-Z0-9_\-]{11}$/.test(s)) {
@@ -217,7 +219,10 @@ export default {
 					<ul>
 						<li>치지직 UID</li>
 						<li>Twitch 아이디</li>
-						<li>a:아프리카TV 아이디</li>
+						<li>
+						  a:아프리카TV 아이디
+							<ul><li>ac:채팅창 등 사용 가능</li></ul>
+						</li>
 						<li>y:YouTube 핸들, 맞춤 URL, 채널 또는 영상 ID</li>
 					</ul>
 					<div><b>예시:</b> https://mul.live/abcdef1234567890abcdef1234567890/twitch/a:afreeca/y:@youtube</div>
