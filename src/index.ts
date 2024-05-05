@@ -200,7 +200,7 @@ export default {
 				content: " | ";
 			}
 
-			#links {
+			.box {
 				margin-top: 16px;
 			}
 		</style>
@@ -226,10 +226,10 @@ export default {
 						<li>y:YouTube 핸들, 맞춤 URL, 채널 또는 영상 ID</li>
 					</ul>
 					<div><b>예시:</b> https://mul.live/abcdef1234567890abcdef1234567890/twitch/a:afreeca/y:@youtube</div>
-					<div id="links">
-						<a href="https://www.chz.app/" target="_blank">Website</a> |
+					<div class="box"><a href="${extension}" target="_blank"><u>Mul.Live Plus 확장프로그램</u></a>을 설치하면 채팅 등 로그인 기능을 사용할 수 있습니다.</div>
+					<div class="box">
+						<a href="https://www.chz.app/" target="_blank">치즈.앱</a> |
 						<a href="https://github.com/jebibot/mullive" target="_blank">GitHub</a> |
-						<a href="${extension}" target="_blank">Extension</a> |
 						<a href="https://discord.gg/9kq3UNKAkz" target="_blank">Discord</a> |
 						<a href="https://www.chz.app/privacy" target="_blank">개인정보처리방침</a>
 					</div>
@@ -298,7 +298,7 @@ export default {
 			headers: {
 				'content-type': 'text/html; charset=utf-8',
 				'content-security-policy':
-					"base-uri 'self'; default-src 'self'; script-src 'sha256-pWW0O5dSvnf32VbLWTJzwENlQgDbJL53vzCCbv4x7bQ='; style-src 'sha256-epFF8TVnPcenZvj4oCbfX4aZutMP9nTmMgtplGnY6s8='; frame-src 'self' chzzk.naver.com *.chzzk.naver.com *.twitch.tv *.afreecatv.com www.youtube.com; object-src 'none'",
+					"base-uri 'self'; default-src 'self'; script-src 'sha256-pWW0O5dSvnf32VbLWTJzwENlQgDbJL53vzCCbv4x7bQ='; style-src 'sha256-HoW/pdbTx+4VB2ty/pnKRb9gvA0m5LInv3olnNbu98M='; frame-src 'self' chzzk.naver.com *.chzzk.naver.com *.twitch.tv *.afreecatv.com www.youtube.com; object-src 'none'",
 				'strict-transport-security': 'max-age=31536000; includeSubDomains',
 				'x-content-type-options': 'nosniff',
 			},
