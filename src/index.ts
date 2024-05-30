@@ -81,7 +81,7 @@ export default {
 					} else if (/^a:[a-z0-9]{3,12}$/i.test(s)) {
 						return { player: `https://play.afreecatv.com/${s.slice(2)}/embed` };
 					} else if (/^ac:[a-z0-9]{3,12}$/i.test(s)) {
-						return { player: `https://play.afreecatv.com/${s.slice(3)}` };
+						return { player: `https://play.afreecatv.com/${s.slice(3)}/embed?showChat=true` };
 					} else if (s.startsWith('y:')) {
 						s = s.slice(2);
 						if (!/^[a-zA-Z0-9_\-]{11}$/.test(s)) {
