@@ -229,7 +229,7 @@ export default {
 						</li>
 						<li>y:YouTube 핸들, 맞춤 URL, 채널 또는 영상 ID</li>
 					</ul>
-					<div><b>예시:</b> https://mul.live/abcdef1234567890abcdef1234567890/twitch/a:afreeca/y:@youtube</div>
+					<div><b>예시:</b> https://mul.live/abcdef1234567890abcdef1234567890/twitch/s:soop/y:@youtube</div>
 					<div class="box"><a href="${extension}" target="_blank"><u>Mul.Live Plus 확장프로그램</u></a>을 설치하면 채팅 등 로그인 기능을 사용할 수 있습니다.</div>
 					<div class="box">
 						<a href="https://www.chz.app/" target="_blank">치즈.앱</a> |
