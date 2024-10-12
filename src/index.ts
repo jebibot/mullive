@@ -82,6 +82,10 @@ export default {
 						return { player: `https://play.afreecatv.com/${s.slice(2)}/embed` };
 					} else if (/^ac:[a-z0-9]{3,12}$/i.test(s)) {
 						return { player: `https://play.afreecatv.com/${s.slice(3)}/embed?showChat=true` };
+					} else if (/^s:[a-z0-9]{3,12}$/i.test(s)) {
+						return { player: `https://play.sooplive.co.kr/${s.slice(2)}/embed` };
+					} else if (/^sc:[a-z0-9]{3,12}$/i.test(s)) {
+						return { player: `https://play.sooplive.co.kr/${s.slice(3)}/embed?showChat=true` };
 					} else if (s.startsWith('y:')) {
 						s = s.slice(2);
 						if (!/^[a-zA-Z0-9_\-]{11}$/.test(s)) {
@@ -126,8 +130,8 @@ export default {
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta name="description" content="여러 치지직, 트위치, 아프리카TV, 유튜브 방송을 함께 볼 수 있습니다." />
-		<meta name="keywords" content="트위치,Twitch,치지직,CHZZK,아프리카TV,AfreecaTV,유튜브,YouTube,스트리머,streamer,BJ,멀티뷰,multiview,multistream" />
+		<meta name="description" content="여러 치지직, 트위치, SOOP, 유튜브 방송을 함께 볼 수 있습니다." />
+		<meta name="keywords" content="Twitch,CHZZK,숲,아프리카TV,AfreecaTV,YouTube,스트리머,streamer,BJ,멀티뷰,multiview,multistream" />
 		<title>Mul.Live - 멀티뷰</title>
 		<link rel="icon" href="/favicon.ico" sizes="32x32" />
 		<link rel="icon" href="/icon.svg" type="image/svg+xml" />
@@ -215,13 +219,13 @@ export default {
 								.join('\n\t\t\t\t')
 						: `<div>
 					<h1>Mul.Live - 멀티뷰</h1>
-					<div>여러 치지직, 트위치, 아프리카TV, 유튜브 방송을 함께 볼 수 있습니다.</div>
+					<div>여러 치지직, 트위치, SOOP, 유튜브 방송을 함께 볼 수 있습니다.</div>
 					<ul>
 						<li>치지직 UID</li>
 						<li>Twitch 아이디</li>
 						<li>
-						  a:아프리카TV 아이디
-							<ul><li>ac:채팅창 등 사용 가능</li></ul>
+						  s:SOOP 아이디
+							<ul><li>sc:채팅창 등 사용 가능</li></ul>
 						</li>
 						<li>y:YouTube 핸들, 맞춤 URL, 채널 또는 영상 ID</li>
 					</ul>
@@ -298,7 +302,7 @@ export default {
 			headers: {
 				'content-type': 'text/html; charset=utf-8',
 				'content-security-policy':
-					"base-uri 'self'; default-src 'self'; script-src 'sha256-pWW0O5dSvnf32VbLWTJzwENlQgDbJL53vzCCbv4x7bQ='; style-src 'sha256-HoW/pdbTx+4VB2ty/pnKRb9gvA0m5LInv3olnNbu98M='; frame-src 'self' chzzk.naver.com *.chzzk.naver.com *.twitch.tv *.afreecatv.com www.youtube.com; object-src 'none'",
+					"base-uri 'self'; default-src 'self'; script-src 'sha256-pWW0O5dSvnf32VbLWTJzwENlQgDbJL53vzCCbv4x7bQ='; style-src 'sha256-HoW/pdbTx+4VB2ty/pnKRb9gvA0m5LInv3olnNbu98M='; frame-src 'self' chzzk.naver.com *.chzzk.naver.com *.twitch.tv *.afreecatv.com *.sooplive.co.kr www.youtube.com; object-src 'none'",
 				'strict-transport-security': 'max-age=31536000; includeSubDomains',
 				'x-content-type-options': 'nosniff',
 			},
