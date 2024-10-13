@@ -35,9 +35,6 @@ export default {
 		if (!ALLOWED_METHODS.includes(request.method)) {
 			return new Response('Method Not Allowed', { status: 405, headers: { Allow: ALLOWED_METHODS.join(', ') } });
 		}
-		if (url.hostname !== 'mul.live') {
-			return Response.redirect(`https://mul.live${url.pathname}`, 301);
-		}
 		if (request.method === 'OPTIONS') {
 			return new Response(null, { status: 204, headers: { Allow: ALLOWED_METHODS.join(', ') } });
 		}
