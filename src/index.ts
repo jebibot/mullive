@@ -217,6 +217,7 @@ export default {
 						: `<div>
 					<h1>Mul.Live - 멀티뷰</h1>
 					<div>여러 치지직, 트위치, SOOP, 유튜브 방송을 함께 볼 수 있습니다.</div>
+					<div>다음을 /로 구분하여 주소 뒤에 붙여주세요.</div>
 					<ul>
 						<li>치지직 UID</li>
 						<li>Twitch 아이디</li>
