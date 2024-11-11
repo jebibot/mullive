@@ -9,9 +9,9 @@
 		"lint": "prettier --check ."
 	},
 	"devDependencies": {
-		"@cloudflare/workers-types": "^4.20241011.0",
+		"@cloudflare/workers-types": "^4.20241106.0",
 		"prettier": "^3.3.3",
 		"typescript": "^5.6.3",
-		"wrangler": "^3.80.4"
+		"wrangler": "^3.86.1"
 	}
 }

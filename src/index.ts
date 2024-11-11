@@ -16,7 +16,7 @@ export interface Env {
 	// MY_DURABLE_OBJECT: DurableObjectNamespace;
 	//
 	// Example binding to R2. Learn more at https://developers.cloudflare.com/workers/runtime-apis/r2/
-	STATIC: R2Bucket;
+	// STATIC: R2Bucket;
 	//
 	// Example binding to a Service. Learn more at https://developers.cloudflare.com/workers/runtime-apis/service-bindings/
 	// MY_SERVICE: Fetcher;
@@ -39,30 +39,6 @@ export default {
 			return new Response(null, { status: 204, headers: { Allow: ALLOWED_METHODS.join(', ') } });
 		}
 		const isHead = request.method === 'HEAD';
-
-		if (url.pathname.includes('.')) {
-			const objectName = url.pathname.slice(1);
-			const object = isHead
-				? await env.STATIC.head(objectName)
-				: await env.STATIC.get(objectName, {
-						range: request.headers,
-						onlyIf: request.headers,
-					});
-			if (object === null) {
-				return new Response('Not Found', { status: 404 });
-			}
-
-			const headers = new Headers();
-			object.writeHttpMetadata(headers);
-			headers.set('etag', object.httpEtag);
-			if (object.range != null) {
-				// @ts-expect-error offset and length are always present
-				headers.set('content-range', `bytes ${object.range.offset}-${object.range.offset + object.range.length - 1}/${object.size}`);
-			}
-			const body = 'body' in object ? (object as R2ObjectBody).body : null;
-			const status = isHead || body ? (request.headers.get('range') !== null ? 206 : 200) : 304;
-			return new Response(body, { headers, status });
-		}
 
 		const stream = (
 			await Promise.all(
