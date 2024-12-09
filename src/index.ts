@@ -44,20 +44,16 @@ export default {
 				url.pathname.split('/').map(async (s) => {
 					if (/^[0-9a-f]{32}$/i.test(s)) {
 						return { name: s.substring(0, 6), player: `https://chzzk.naver.com/live/${s}`, chat: `https://chzzk.naver.com/live/${s}/chat` };
-					} else if (/^[a-z0-9_]{4,25}$/i.test(s)) {
+					} else if (/^t:[a-z0-9_]{4,25}$/i.test(s)) {
+						s = s.slice(2);
 						return {
 							name: s,
 							player: `https://player.twitch.tv/?channel=${s}&parent=${url.hostname}`,
 							chat: `https://www.twitch.tv/embed/${s}/chat?darkpopout&parent=${url.hostname}`,
 						};
-					} else if (/^a:[a-z0-9]{3,12}$/i.test(s)) {
-						return { player: `https://play.afreecatv.com/${s.slice(2)}/embed` };
-					} else if (/^ac:[a-z0-9]{3,12}$/i.test(s)) {
-						return { player: `https://play.afreecatv.com/${s.slice(3)}/embed?showChat=true` };
-					} else if (/^s:[a-z0-9]{3,12}$/i.test(s)) {
-						return { player: `https://play.sooplive.co.kr/${s.slice(2)}/embed` };
-					} else if (/^sc:[a-z0-9]{3,12}$/i.test(s)) {
-						return { player: `https://play.sooplive.co.kr/${s.slice(3)}/embed?showChat=true` };
+					} else if (/^(?:[as]c?:)?[a-z0-9]{3,12}$/i.test(s)) {
+						s = s.split(':').pop()!;
+						return { player: `https://play.sooplive.co.kr/${s}/embed` };
 					} else if (s.startsWith('y:')) {
 						s = s.slice(2);
 						if (!/^[a-zA-Z0-9_\-]{11}$/.test(s)) {
@@ -102,7 +98,7 @@ export default {
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta name="description" content="여러 치지직, 트위치, SOOP, 유튜브 방송을 함께 볼 수 있습니다." />
+		<meta name="description" content="여러 치지직, SOOP, 트위치, 유튜브 방송을 함께 볼 수 있습니다." />
 		<meta name="keywords" content="Twitch,CHZZK,숲,아프리카TV,AfreecaTV,YouTube,스트리머,streamer,BJ,멀티뷰,multiview,multistream" />
 		<title>Mul.Live - 멀티뷰</title>
 		<link rel="icon" href="/favicon.ico" sizes="32x32" />
@@ -191,18 +187,15 @@ export default {
 								.join('\n\t\t\t\t')
 						: `<div>
 					<h1>Mul.Live - 멀티뷰</h1>
-					<div>여러 치지직, 트위치, SOOP, 유튜브 방송을 함께 볼 수 있습니다.</div>
+					<div>여러 치지직, SOOP, 트위치, 유튜브 방송을 함께 볼 수 있습니다.</div>
 					<div>다음을 /로 구분하여 주소 뒤에 붙여주세요.</div>
 					<ul>
 						<li>치지직 UID</li>
-						<li>Twitch 아이디</li>
-						<li>
-						  s:SOOP 아이디
-							<ul><li>sc:채팅창 등 사용 가능</li></ul>
-						</li>
+						<li>SOOP 아이디</li>
+						<li>t:Twitch 아이디</li>
 						<li>y:YouTube 핸들, 맞춤 URL, 채널 또는 영상 ID</li>
 					</ul>
-					<div><b>예시:</b> https://mul.live/abcdef1234567890abcdef1234567890/twitch/s:soop/y:@youtube</div>
+					<div><b>예시:</b> https://mul.live/abcdef1234567890abcdef1234567890/soop/t:twitch/y:@youtube</div>
 					<div class="box"><a href="${extension}" target="_blank"><u>Mul.Live Plus 확장프로그램</u></a>을 설치하면 채팅 등 로그인 기능을 사용할 수 있습니다.</div>
 					<div class="box">
 						<a href="https://www.chz.app/" target="_blank">치즈.앱</a> |
