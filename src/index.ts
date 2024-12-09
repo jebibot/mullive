@@ -39,6 +39,7 @@ export default {
 			return new Response(null, { status: 204, headers: { Allow: ALLOWED_METHODS.join(', ') } });
 		}
 
+		const hasExtension = true;
 		const stream = (
 			await Promise.all(
 				url.pathname.split('/').map(async (s) => {
@@ -53,7 +54,13 @@ export default {
 						};
 					} else if (/^(?:[as]c?:)?[a-z0-9]{3,12}$/i.test(s)) {
 						s = s.split(':').pop()!;
-						return { player: `https://play.sooplive.co.kr/${s}/embed` };
+						return hasExtension
+							? {
+									name: s,
+									player: `https://play.sooplive.co.kr/${s}/embed?showChat=true`,
+									chat: `https://play.sooplive.co.kr/${s}?vtype=chat`,
+								}
+							: { name: s, player: `https://play.sooplive.co.kr/${s}/embed` };
 					} else if (s.startsWith('y:')) {
 						s = s.slice(2);
 						if (!/^[a-zA-Z0-9_\-]{11}$/.test(s)) {
@@ -183,7 +190,10 @@ export default {
 				${
 					stream.length > 0
 						? stream
-								.map((s) => `<iframe src=${JSON.stringify(s!.player)} frameborder="0" scrolling="no" allowfullscreen="true"></iframe>`)
+								.map(
+									(s) =>
+										`<iframe src=${JSON.stringify(s.player)} name=${JSON.stringify(s.name)} frameborder="0" scrolling="no" allowfullscreen="true"></iframe>`,
+								)
 								.join('\n\t\t\t\t')
 						: `<div>
 					<h1>Mul.Live - 멀티뷰</h1>
@@ -206,10 +216,10 @@ export default {
 				</div>`
 				}
 			</div>
-			<iframe src=${chats.length > 2 ? JSON.stringify(chats[0].chat) : 'about:blank'} frameborder="0" scrolling="no" id="chat" name="chat"></iframe>
+			<iframe src="about:blank" frameborder="0" scrolling="no" id="chat" name="chat"></iframe>
 		</div>
 		<div id="chats">
-			${chats.map((s) => `<a href=${JSON.stringify(s.chat)} target="${s.name === '로그인' ? '_blank' : 'chat'}">${s!.name}</a>`).join('\n\t\t\t')}
+			${chats.map((s) => `<a href=${JSON.stringify(s.chat)} target="${s.name === '로그인' ? '_blank' : 'chat'}">${s.name}</a>`).join('\n\t\t\t')}
 		</div>
 		<script type="text/javascript">
 		  const streams = document.getElementById("streams");
