@@ -38,7 +38,6 @@ export default {
 		if (request.method === 'OPTIONS') {
 			return new Response(null, { status: 204, headers: { Allow: ALLOWED_METHODS.join(', ') } });
 		}
-		const isHead = request.method === 'HEAD';
 
 		const stream = (
 			await Promise.all(
@@ -272,7 +271,7 @@ export default {
 	</body>
 </html>
 `;
-		return new Response(isHead ? null : html, {
+		return new Response(html, {
 			headers: {
 				'content-type': 'text/html; charset=utf-8',
 				'content-security-policy':
