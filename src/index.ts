@@ -39,7 +39,7 @@ export default {
 			return new Response(null, { status: 204, headers: { Allow: ALLOWED_METHODS.join(', ') } });
 		}
 
-		const hasExtension = true;
+		const hasExtension = request.headers.has('x-has-extension');
 		const stream = (
 			await Promise.all(
 				url.pathname.split('/').map(async (s) => {
