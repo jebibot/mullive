@@ -278,7 +278,7 @@ export default {
 			headers: {
 				'content-type': 'text/html; charset=utf-8',
 				'content-security-policy':
-					"base-uri 'self'; default-src 'self'; script-src 'sha256-pWW0O5dSvnf32VbLWTJzwENlQgDbJL53vzCCbv4x7bQ='; style-src 'sha256-HoW/pdbTx+4VB2ty/pnKRb9gvA0m5LInv3olnNbu98M='; frame-src 'self' chzzk.naver.com *.chzzk.naver.com *.twitch.tv *.afreecatv.com *.sooplive.co.kr www.youtube.com; object-src 'none'",
+					"base-uri 'self'; default-src 'self'; script-src 'sha256-pWW0O5dSvnf32VbLWTJzwENlQgDbJL53vzCCbv4x7bQ='; style-src 'sha256-HoW/pdbTx+4VB2ty/pnKRb9gvA0m5LInv3olnNbu98M='; frame-src 'self' chzzk.naver.com *.chzzk.naver.com *.twitch.tv *.sooplive.co.kr www.youtube.com; object-src 'none'",
 				'strict-transport-security': 'max-age=31536000; includeSubDomains',
 				'x-content-type-options': 'nosniff',
 			},
