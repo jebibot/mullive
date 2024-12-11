@@ -1,7 +1,7 @@
 name = "multichzzk"
 main = "src/index.ts"
 compatibility_date = "2024-11-06"
-compatibility_flags = ["nodejs_compat"]
+compatibility_flags = []
 assets = { directory = "./public", binding = "ASSETS" }
 
 # Variable bindings. These are arbitrary, plaintext strings (similar to environment variables)
