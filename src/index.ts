@@ -81,6 +81,7 @@ const parseStream = async (id: string, parent: string, hasExtension: boolean): P
 			}
 			const live = await fetch(`https://www.youtube.com/${channel}/live`, { redirect: 'follow' });
 			if (!live.ok) {
+				live.body?.cancel();
 				return;
 			}
 			const html = await live.text();
@@ -114,6 +115,7 @@ const getName = async (s: Stream) => {
 			case 'chzzk': {
 				const res = await fetch(`https://api.chzzk.naver.com/service/v1/channels/${s.id}`);
 				if (!res.ok) {
+					res.body?.cancel();
 					return;
 				}
 				const data = await res.json<{ code: number; content?: { channelName: string } }>();
@@ -125,6 +127,7 @@ const getName = async (s: Stream) => {
 			case 'soop': {
 				const res = await fetch(`https://st.sooplive.co.kr/api/get_station_status.php?szBjId=${s.id}`);
 				if (!res.ok) {
+					res.body?.cancel();
 					return;
 				}
 				const data = await res.json<{ RESULT: number; DATA?: { user_nick: string } }>();
