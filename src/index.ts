@@ -183,15 +183,6 @@ export default {
 				overflow: hidden;
 			}
 
-			a {
-				color: #ddd;
-				text-decoration: none;
-			}
-
-			a:hover {
-				color: #fff;
-			}
-
 			.container {
 				display: flex;
 				width: 100%;
