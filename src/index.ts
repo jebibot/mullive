@@ -72,7 +72,7 @@ const parseStream = async (id: string, parent: string, hasExtension: boolean): P
 			let channel = '';
 			if (/^UC[a-zA-Z0-9_\-]{22}$/.test(id)) {
 				channel = `channel/${id}`;
-			} else if (/^@[a-zA-Z0-9_\-]{3,30}$/.test(id)) {
+			} else if (/^@[a-zA-Z0-9_\-.%]{3,270}$/.test(id)) {
 				channel = id;
 			} else if (/^[a-zA-Z0-9]{1,100}$/.test(id)) {
 				channel = `c/${id}`;
