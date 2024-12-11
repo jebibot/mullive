@@ -44,7 +44,7 @@ export default {
 			await Promise.all(
 				url.pathname.split('/').map(async (s) => {
 					if (/^[0-9a-f]{32}$/i.test(s)) {
-						return { name: s.substring(0, 6), player: `https://chzzk.naver.com/live/${s}`, chat: `https://chzzk.naver.com/live/${s}/chat` };
+						return { name: s, player: `https://chzzk.naver.com/live/${s}`, chat: `https://chzzk.naver.com/live/${s}/chat` };
 					} else if (/^t:[a-z0-9_]{4,25}$/i.test(s)) {
 						s = s.slice(2);
 						return {
@@ -54,13 +54,12 @@ export default {
 						};
 					} else if (/^(?:[as]c?:)?[a-z0-9]{3,12}$/i.test(s)) {
 						s = s.split(':').pop()!;
-						return hasExtension
-							? {
-									name: s,
-									player: `https://play.sooplive.co.kr/${s}/embed?showChat=true`,
-									chat: `https://play.sooplive.co.kr/${s}?vtype=chat`,
-								}
-							: { name: s, player: `https://play.sooplive.co.kr/${s}/embed` };
+						return {
+							name: s,
+							player: `https://play.sooplive.co.kr/${s}/embed${hasExtension ? '?showChat=true' : ''}`,
+							chat: `https://play.sooplive.co.kr/${s}?vtype=chat`,
+							extension: true,
+						};
 					} else if (s.startsWith('y:')) {
 						s = s.slice(2);
 						if (!/^[a-zA-Z0-9_\-]{11}$/.test(s)) {
@@ -97,9 +96,7 @@ export default {
 		const extension = request.headers.get('user-agent')?.includes('Firefox')
 			? 'https://addons.mozilla.org/addon/mullive/'
 			: 'https://chromewebstore.google.com/detail/pahcphmhihleneomklgfbbneokhjiaim';
-		const chats = stream.filter((s) => s.chat);
-		chats.push({ name: '로그인', player: '', chat: extension });
-		chats.push({ name: '닫기', player: '', chat: 'about:blank' });
+		const initialChat = stream.find((s) => !s.extension);
 		const html = `<!DOCTYPE html>
 <html lang="ko">
 	<head>
@@ -113,6 +110,10 @@ export default {
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 		<link rel="manifest" href="/manifest.webmanifest" />
 		<style>
+			:root {
+				color-scheme: dark;
+			}
+
 			html,
 			body {
 				margin: 0;
@@ -155,28 +156,51 @@ export default {
 				aspect-ratio: 16 / 9;
 			}
 
-			#chat {
+			#chat-container {
+				display: flex;
+				flex-direction: column;
 				width: 350px;
 				height: 100%;
 			}
 
-			#chats {
+			#chat-container:has(#chat[src="about:blank"]) {
+				display: none;
+			}
+
+			#chat-select {
+				margin: 4px;
+				margin-right: 32px;
+				padding: 2px;
+			}
+
+			#chat {
+				flex-grow: 1;
+				width: 100%;
+			}
+
+			#chat-toggle {
 				position: fixed;
 				top: 0;
 				right: 0;
-				margin: 4px;
-				padding: 4px;
-				border-radius: 4px;
-				background-color: rgba(0, 0, 0, 0.8);
-				transition: opacity 150ms ease-in-out;
+				padding: 6px;
+				border-bottom-left-radius: 8px;
+				line-height: 1;
+				background-color: #333;
+				cursor: pointer;
 			}
 
-			#chats:hover {
-				opacity: 1 !important;
+			#chat-toggle svg {
+				width: 16px;
+				height: 16px;
+				fill: #777;
 			}
 
-			#chats a:not(:last-child)::after {
-				content: " | ";
+			#chat-toggle:hover {
+				background-color: #555;
+			}
+
+			#chat-toggle:hover svg {
+				fill: #999;
 			}
 
 			.box {
@@ -216,24 +240,25 @@ export default {
 				</div>`
 				}
 			</div>
-			<iframe src="about:blank" frameborder="0" scrolling="no" id="chat" name="chat"></iframe>
+			<div id="chat-container">
+				<select id="chat-select">
+					${stream.map((s) => `<option value=${JSON.stringify(s.chat)}${s.extension && !hasExtension ? ` disabled>${s.name} [확장 프로그램 필요]` : `${s === initialChat ? ' selected' : ''}>${s.name}`}</option>`).join('\n\t\t\t\t\t')}
+				</select>
+				<iframe src=${JSON.stringify(initialChat?.chat || 'about:blank')} frameborder="0" scrolling="no" id="chat"></iframe>
+			</div>
 		</div>
-		<div id="chats">
-			${chats.map((s) => `<a href=${JSON.stringify(s.chat)} target="${s.name === '로그인' ? '_blank' : 'chat'}">${s.name}</a>`).join('\n\t\t\t')}
+		<div id="chat-toggle">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M512 240c0 114.9-114.6 208-256 208c-37.1 0-72.3-6.4-104.1-17.9c-11.9 8.7-31.3 20.6-54.3 30.6C73.6 471.1 44.7 480 16 480c-6.5 0-12.3-3.9-14.8-9.9c-2.5-6-1.1-12.8 3.4-17.4c0 0 0 0 0 0s0 0 0 0s0 0 0 0c0 0 0 0 0 0l.3-.3c.3-.3 .7-.7 1.3-1.4c1.1-1.2 2.8-3.1 4.9-5.7c4.1-5 9.6-12.4 15.2-21.6c10-16.6 19.5-38.4 21.4-62.9C17.7 326.8 0 285.1 0 240C0 125.1 114.6 32 256 32s256 93.1 256 208z"/></svg>
 		</div>
 		<script type="text/javascript">
-		  const streams = document.getElementById("streams");
-		  const chat = document.getElementById("chat");
+			const streams = document.getElementById("streams");
+			const chat = document.getElementById("chat");
+			const chatSelect = document.getElementById("chat-select");
+			const chatToggle = document.getElementById("chat-toggle");
 			const frames = streams.querySelectorAll("iframe");
 			const n = frames.length;
 			function adjustLayout() {
-				let isChatOpen = true;
-				try {
-					isChatOpen = window.frames.chat.location.href !== "about:blank";
-				} catch {}
-				chat.style.display = isChatOpen ? "block" : "none";
-
-				const width = window.innerWidth - 8 - (isChatOpen ? 350 : 0);
+				const width = window.innerWidth - 8 - (chat.src !== "about:blank" ? 350 : 0);
 				const height = window.innerHeight - 8;
 
 				let bestWidth = 0;
@@ -262,14 +287,18 @@ export default {
 			adjustLayout();
 			window.addEventListener("resize", adjustLayout);
 			chat.addEventListener("load", adjustLayout);
+			chatSelect.addEventListener("change", (e) => {
+				chat.src = e.target.value;
+			})
+			chatToggle.addEventListener("click", () => {
+				chat.src = chat.src !== "about:blank" ? "about:blank" : chatSelect.value;
+			});
+
 			document.addEventListener('securitypolicyviolation', (e) => {
 				if (e.blockedURI === 'https://nid.naver.com') {
 					window.open('https://nid.naver.com/nidlogin.login');
 				}
 			});
-			setTimeout(() => {
-				document.getElementById("chats").style.opacity = 0;
-			}, 10000);
 		</script>
 	</body>
 </html>
@@ -278,7 +307,7 @@ export default {
 			headers: {
 				'content-type': 'text/html; charset=utf-8',
 				'content-security-policy':
-					"base-uri 'self'; default-src 'self'; script-src 'sha256-pWW0O5dSvnf32VbLWTJzwENlQgDbJL53vzCCbv4x7bQ='; style-src 'sha256-HoW/pdbTx+4VB2ty/pnKRb9gvA0m5LInv3olnNbu98M='; frame-src 'self' chzzk.naver.com *.chzzk.naver.com *.twitch.tv *.sooplive.co.kr www.youtube.com; object-src 'none'",
+					"base-uri 'self'; default-src 'self'; script-src 'sha256-aLlVwXxg1hl9nKvoryAzGeQD2D3KIcdIyPXvQwJta/k='; style-src 'sha256-VEOn/bTnoQf9L9/RRz8HUsR9nRdGPaPuC2rh5RrrEHk='; frame-src 'self' chzzk.naver.com *.chzzk.naver.com *.twitch.tv *.sooplive.co.kr www.youtube.com; object-src 'none'",
 				'strict-transport-security': 'max-age=31536000; includeSubDomains',
 				'x-content-type-options': 'nosniff',
 			},
