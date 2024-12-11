@@ -28,6 +28,8 @@ export interface Env {
 interface Stream {
 	type: 'chzzk' | 'twitch' | 'soop' | 'youtube';
 	id: string;
+	/** Not XSS-safe */
+	name?: string;
 	player: string;
 	chat: string;
 	extension?: boolean;
@@ -35,6 +37,7 @@ interface Stream {
 
 const ALLOWED_METHODS = ['OPTIONS', 'GET', 'HEAD'];
 
+const encoder = new TextEncoder();
 const isNotUndefined = <T>(x: T | undefined): x is T => x !== undefined;
 
 const parseStream = async (id: string, parent: string, hasExtension: boolean): Promise<Stream | undefined> => {
@@ -64,6 +67,7 @@ const parseStream = async (id: string, parent: string, hasExtension: boolean): P
 		};
 	} else if (id.startsWith('y:')) {
 		id = id.slice(2);
+		let name;
 		if (!/^[a-zA-Z0-9_\-]{11}$/.test(id)) {
 			let channel = '';
 			if (/^UC[a-zA-Z0-9_\-]{22}$/.test(id)) {
@@ -85,14 +89,52 @@ const parseStream = async (id: string, parent: string, hasExtension: boolean): P
 				return;
 			}
 			id = match[1];
+
+			const match2 = html.match(/"author":"([^"]+)"/);
+			if (match2) {
+				name = match2[1];
+			}
 		}
 		return {
 			type: 'youtube',
 			id,
+			name,
 			player: `https://www.youtube.com/embed/${id}?autoplay=1`,
 			chat: `https://www.youtube.com/live_chat?v=${id}&embed_domain=${parent}&dark_theme=1`,
 		};
 	}
+};
+
+const getName = async (s: Stream) => {
+	if (s.name) {
+		return s.name;
+	}
+	try {
+		switch (s.type) {
+			case 'chzzk': {
+				const res = await fetch(`https://api.chzzk.naver.com/service/v1/channels/${s.id}`);
+				if (!res.ok) {
+					return;
+				}
+				const data = await res.json<{ code: number; content?: { channelName: string } }>();
+				if (data.code !== 200) {
+					return;
+				}
+				return data.content?.channelName;
+			}
+			case 'soop': {
+				const res = await fetch(`https://st.sooplive.co.kr/api/get_station_status.php?szBjId=${s.id}`);
+				if (!res.ok) {
+					return;
+				}
+				const data = await res.json<{ RESULT: number; DATA?: { user_nick: string } }>();
+				if (data.RESULT !== 1) {
+					return;
+				}
+				return data.DATA?.user_nick;
+			}
+		}
+	} catch {}
 };
 
 export default {
@@ -112,6 +154,7 @@ export default {
 			? 'https://addons.mozilla.org/addon/mullive/'
 			: 'https://chromewebstore.google.com/detail/pahcphmhihleneomklgfbbneokhjiaim';
 		const initialChat = stream.find((s) => !s.extension);
+		const nonce = crypto.randomUUID();
 		const html = `<!DOCTYPE html>
 <html lang="ko">
 	<head>
@@ -124,7 +167,7 @@ export default {
 		<link rel="icon" href="/icon.svg" type="image/svg+xml" />
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 		<link rel="manifest" href="/manifest.webmanifest" />
-		<style>
+		<style nonce="${nonce}">
 			:root {
 				color-scheme: dark;
 			}
@@ -265,13 +308,13 @@ export default {
 		<div id="chat-toggle">
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M512 240c0 114.9-114.6 208-256 208c-37.1 0-72.3-6.4-104.1-17.9c-11.9 8.7-31.3 20.6-54.3 30.6C73.6 471.1 44.7 480 16 480c-6.5 0-12.3-3.9-14.8-9.9c-2.5-6-1.1-12.8 3.4-17.4c0 0 0 0 0 0s0 0 0 0s0 0 0 0c0 0 0 0 0 0l.3-.3c.3-.3 .7-.7 1.3-1.4c1.1-1.2 2.8-3.1 4.9-5.7c4.1-5 9.6-12.4 15.2-21.6c10-16.6 19.5-38.4 21.4-62.9C17.7 326.8 0 285.1 0 240C0 125.1 114.6 32 256 32s256 93.1 256 208z"/></svg>
 		</div>
-		<script type="text/javascript">
+		<script type="text/javascript" nonce="${nonce}">
 			const streams = document.getElementById("streams");
 			const chat = document.getElementById("chat");
 			const chatSelect = document.getElementById("chat-select");
 			const chatToggle = document.getElementById("chat-toggle");
-			const frames = streams.querySelectorAll("iframe");
-			const n = frames.length;
+			const iframes = streams.querySelectorAll("iframe");
+			const n = iframes.length;
 			function adjustLayout() {
 				const width = window.innerWidth - 8 - (chat.src !== "about:blank" ? 350 : 0);
 				const height = window.innerHeight - 8;
@@ -292,11 +335,16 @@ export default {
 						bestHeight = maxHeight;
 					}
 				}
-				frames.forEach((f) => {
-					f.style.flexGrow = 0;
+				iframes.forEach((f) => {
+					f.style.flexGrow = "0";
 					f.style.width = \`\${bestWidth}px\`;
 					f.style.height = \`\${bestHeight}px\`;
 				});
+			}
+
+			function setName(i, name) {
+				const option = chatSelect.children[i];
+				option.textContent = option.disabled ? \`\${name} [확장 프로그램 필요]\` : name;
 			}
 
 			adjustLayout();
@@ -315,17 +363,41 @@ export default {
 				}
 			});
 		</script>
-	</body>
-</html>
 `;
-		return new Response(html, {
-			headers: {
-				'content-type': 'text/html; charset=utf-8',
-				'content-security-policy':
-					"base-uri 'self'; default-src 'self'; script-src 'sha256-aLlVwXxg1hl9nKvoryAzGeQD2D3KIcdIyPXvQwJta/k='; style-src 'sha256-VEOn/bTnoQf9L9/RRz8HUsR9nRdGPaPuC2rh5RrrEHk='; frame-src 'self' chzzk.naver.com *.chzzk.naver.com *.twitch.tv *.sooplive.co.kr www.youtube.com; object-src 'none'",
-				'strict-transport-security': 'max-age=31536000; includeSubDomains',
-				'x-content-type-options': 'nosniff',
+		return new Response(
+			new ReadableStream({
+				start(controller) {
+					controller.enqueue(encoder.encode(html));
+					(async () => {
+						for (let i = 0; i < stream.length; i++) {
+							const name = await getName(stream[i]);
+							if (name) {
+								controller.enqueue(
+									encoder.encode(`		<script type="text/javascript" nonce="${nonce}">setName(${i}, ${JSON.stringify(name)});</script>\n`),
+								);
+							}
+						}
+						controller.enqueue(
+							encoder.encode(`	</body>
+</html>
+`),
+						);
+						controller.close();
+					})();
+				},
+				cancel(reason) {
+					console.log('Stream cancelled:', reason);
+				},
+			}),
+			{
+				headers: {
+					'content-type': 'text/html; charset=utf-8',
+					'content-security-policy': `base-uri 'self'; default-src 'self'; script-src 'nonce-${nonce}'; style-src 'nonce-${nonce}'; frame-src 'self' chzzk.naver.com *.chzzk.naver.com *.twitch.tv *.sooplive.co.kr www.youtube.com; object-src 'none'`,
+					'strict-transport-security': 'max-age=31536000; includeSubDomains',
+					'x-accel-buffering': 'no',
+					'x-content-type-options': 'nosniff',
+				},
 			},
-		});
+		);
 	},
 };
