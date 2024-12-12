@@ -36,6 +36,9 @@ interface Stream {
 }
 
 const ALLOWED_METHODS = ['OPTIONS', 'GET', 'HEAD'];
+const htmlEnd = `	</body>
+</html>
+`;
 
 const encoder = new TextEncoder();
 const isNotUndefined = <T>(x: T | undefined): x is T => x !== undefined;
@@ -126,6 +129,19 @@ const getName = async (s: Stream) => {
 			}
 		}
 	} catch {}
+};
+
+const streamNames = async (stream: Stream[], controller: ReadableStreamDefaultController, nonce: string) => {
+	for (let i = 0; i < stream.length; i++) {
+		const name = await getName(stream[i]);
+		if (name) {
+			controller.enqueue(
+				encoder.encode(`		<script type="text/javascript" nonce="${nonce}">setName(${i}, ${JSON.stringify(name)});</script>\n`),
+			);
+		}
+	}
+	controller.enqueue(encoder.encode(htmlEnd));
+	controller.close();
 };
 
 export default {
@@ -442,30 +458,17 @@ export default {
 		</script>
 `;
 		return new Response(
-			new ReadableStream({
-				start(controller) {
-					controller.enqueue(encoder.encode(html));
-					(async () => {
-						for (let i = 0; i < stream.length; i++) {
-							const name = await getName(stream[i]);
-							if (name) {
-								controller.enqueue(
-									encoder.encode(`		<script type="text/javascript" nonce="${nonce}">setName(${i}, ${JSON.stringify(name)});</script>\n`),
-								);
-							}
-						}
-						controller.enqueue(
-							encoder.encode(`	</body>
-</html>
-`),
-						);
-						controller.close();
-					})();
-				},
-				cancel(reason) {
-					console.log('Stream cancelled:', reason);
-				},
-			}),
+			stream.some((s) => s.type === 'chzzk')
+				? new ReadableStream({
+						start(controller) {
+							controller.enqueue(encoder.encode(html));
+							streamNames(stream, controller, nonce);
+						},
+						cancel(reason) {
+							console.log('Stream cancelled:', reason);
+						},
+					})
+				: html + htmlEnd,
 			{
 				headers: {
 					'content-type': 'text/html; charset=utf-8',
