@@ -312,7 +312,7 @@ export default {
 			</div>
 			<div id="chat-container">
 				<select id="chat-select">
-					${stream.map((s) => `<option value=${JSON.stringify(s.chat)}${hasExtension || !s.extension ? `${s === initialChat ? ' selected' : ''}>${s.id}` : ` disabled>${s.id} [확장 프로그램 필요]`}</option>`).join('\n\t\t\t\t\t')}
+					${stream.map((s) => `<option value=${JSON.stringify(s.chat)}${hasExtension || !s.extension ? `>${s.id}` : ` disabled>${s.id} [확장 프로그램 필요]`}</option>`).join('\n\t\t\t\t\t')}
 				</select>
 				<iframe src=${JSON.stringify((!initialChat?.extension && initialChat?.chat) || 'about:blank')} frameborder="0" scrolling="no" id="chat"></iframe>
 			</div>
