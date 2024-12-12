@@ -458,7 +458,7 @@ export default {
 		</script>
 `;
 		return new Response(
-			stream.some((s) => s.type === 'chzzk')
+			stream.some((s) => s.type === 'chzzk' || s.type === 'youtube')
 				? new ReadableStream({
 						start(controller) {
 							controller.enqueue(encoder.encode(html));
