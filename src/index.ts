@@ -61,7 +61,7 @@ const parseStream = async (id: string, parent: string, hasExtension: boolean): P
 		return {
 			type: 'soop',
 			id,
-			player: `https://play.sooplive.co.kr/${id}/embed${hasExtension ? '?showChat=true' : ''}`,
+			player: `https://play.sooplive.co.kr/${id}/direct${hasExtension ? '?showChat=true' : ''}`,
 			chat: `https://play.sooplive.co.kr/${id}?vtype=chat`,
 			extension: true,
 		};
@@ -124,18 +124,6 @@ const getName = async (s: Stream) => {
 				}
 				return data.content?.channelName;
 			}
-			case 'soop': {
-				const res = await fetch(`https://st.sooplive.co.kr/api/get_station_status.php?szBjId=${s.id}`);
-				if (!res.ok) {
-					res.body?.cancel();
-					return;
-				}
-				const data = await res.json<{ RESULT: number; DATA?: { user_nick: string } }>();
-				if (data.RESULT !== 1) {
-					return;
-				}
-				return data.DATA?.user_nick;
-			}
 		}
 	} catch {}
 };
@@ -153,7 +141,7 @@ export default {
 		const hasExtension = request.headers.has('x-has-extension');
 		const parts = url.pathname.split('/');
 		const stream = (await Promise.all(parts.map((s) => parseStream(s, url.hostname, hasExtension)))).filter(isNotUndefined);
-		const initialChat = stream.find((s) => !s.extension);
+		const initialChat = stream.find((s) => hasExtension || !s.extension);
 		const nonce = crypto.randomUUID();
 		const html = `<!DOCTYPE html>
 <html lang="ko">
@@ -326,7 +314,7 @@ export default {
 				<select id="chat-select">
 					${stream.map((s) => `<option value=${JSON.stringify(s.chat)}${s.extension && !hasExtension ? ` disabled>${s.id} [확장 프로그램 필요]` : `${s === initialChat ? ' selected' : ''}>${s.id}`}</option>`).join('\n\t\t\t\t\t')}
 				</select>
-				<iframe src=${JSON.stringify(initialChat?.chat || 'about:blank')} frameborder="0" scrolling="no" id="chat"></iframe>
+				<iframe src=${JSON.stringify((!initialChat?.extension && initialChat?.chat) || 'about:blank')} frameborder="0" scrolling="no" id="chat"></iframe>
 			</div>
 		</div>
 		<div id="chat-toggle" class="button">
@@ -338,6 +326,7 @@ export default {
 			<div id="overlay-button" class="button">확장 프로그램 설치</div>
 		</div>
 		<script type="text/javascript" nonce="${nonce}">
+			let init = true;
 			const hasExtension = ${JSON.stringify(hasExtension)};
 			const extensionUrl = /firefox/i.test(navigator.userAgent)
 				? "https://addons.mozilla.org/addon/mullive/"
@@ -434,7 +423,20 @@ export default {
 			});
 			window.addEventListener("message", (e) => {
 				if (e.origin === "https://play.sooplive.co.kr") {
-					switch (e.data.type) {
+					switch (e.data.cmd) {
+						case "PonReady":
+							if (init && hasExtension && e.source === iframes[0].contentWindow) {
+								init = false;
+								chat.src = chatSelect.value;
+							}
+							break;
+						case "PupdateBroadInfo":
+							for (const o of chatSelect.children) {
+								if (o.textContent === e.data.data.id) {
+									o.textContent = e.data.data.nick;
+								}
+							}
+							break;
 						case "showRefreshOverlay":
 							showRefreshOverlay();
 							break;
