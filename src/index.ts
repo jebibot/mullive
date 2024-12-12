@@ -348,9 +348,19 @@ export default {
 				chat.src = chat.src !== "about:blank" ? "about:blank" : chatSelect.value;
 			});
 
-			document.addEventListener('securitypolicyviolation', (e) => {
-				if (e.blockedURI === 'https://nid.naver.com') {
-					window.open('https://nid.naver.com/nidlogin.login');
+			document.addEventListener("securitypolicyviolation", (e) => {
+				if (e.blockedURI === "https://nid.naver.com") {
+					window.open("https://nid.naver.com/nidlogin.login");
+					chat.src = "about:blank";
+				}
+			});
+			window.addEventListener("message", (e) => {
+				if (e.origin === "https://play.sooplive.co.kr") {
+					switch (e.data.type) {
+						case "closeChat":
+							chat.src = "about:blank";
+							break;
+					}
 				}
 			});
 		</script>
