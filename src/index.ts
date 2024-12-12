@@ -150,9 +150,6 @@ export default {
 		const hasExtension = request.headers.has('x-has-extension');
 		const parts = url.pathname.split('/');
 		const stream = (await Promise.all(parts.map((s) => parseStream(s, url.hostname, hasExtension)))).filter(isNotUndefined);
-		const extension = request.headers.get('user-agent')?.includes('Firefox')
-			? 'https://addons.mozilla.org/addon/mullive/'
-			: 'https://chromewebstore.google.com/detail/pahcphmhihleneomklgfbbneokhjiaim';
 		const initialChat = stream.find((s) => !s.extension);
 		const nonce = crypto.randomUUID();
 		const html = `<!DOCTYPE html>
@@ -312,7 +309,7 @@ export default {
 						<li>y:YouTube 핸들, 맞춤 URL, 채널 또는 영상 ID</li>
 					</ul>
 					<div><b>예시:</b> https://mul.live/abcdef1234567890abcdef1234567890/soop/t:twitch/y:@youtube</div>
-					<div class="box"><a href="${extension}" target="_blank"><u>Mul.Live Plus 확장프로그램</u></a>을 설치하면 채팅 등 로그인 기능을 사용할 수 있습니다.</div>
+					<div class="box"><a id="extension-link" target="_blank"><u>Mul.Live Plus 확장프로그램</u></a>을 설치하면 채팅 등 로그인 기능을 사용할 수 있습니다.</div>
 					<div class="box">
 						<a href="https://www.chz.app/" target="_blank">치즈.앱</a> |
 						<a href="https://github.com/jebibot/mullive" target="_blank">GitHub</a> |
@@ -339,6 +336,14 @@ export default {
 		</div>
 		<script type="text/javascript" nonce="${nonce}">
 			const hasExtension = ${JSON.stringify(hasExtension)};
+			const extensionUrl = /firefox/i.test(navigator.userAgent)
+				? 'https://addons.mozilla.org/addon/mullive/'
+				: 'https://chromewebstore.google.com/detail/pahcphmhihleneomklgfbbneokhjiaim';
+			const extensionLink = document.getElementById("extension-link");
+			if (extensionLink != null) {
+				extensionLink.href = extensionUrl;
+			}
+
 			const streams = document.getElementById("streams");
 			const chat = document.getElementById("chat");
 			const chatSelect = document.getElementById("chat-select");
@@ -406,7 +411,7 @@ export default {
 			overlayButton.addEventListener("click", () => {
 				switch (overlayButton.textContent) {
 					case "확장 프로그램 설치":
-						window.open("${extension}");
+						window.open(extensionUrl);
 						break;
 					case "새로고침":
 						chat.src = chatSelect.value;
