@@ -340,8 +340,8 @@ export default {
 		<script type="text/javascript" nonce="${nonce}">
 			const hasExtension = ${JSON.stringify(hasExtension)};
 			const extensionUrl = /firefox/i.test(navigator.userAgent)
-				? 'https://addons.mozilla.org/addon/mullive/'
-				: 'https://chromewebstore.google.com/detail/pahcphmhihleneomklgfbbneokhjiaim';
+				? "https://addons.mozilla.org/addon/mullive/"
+				: "https://chromewebstore.google.com/detail/pahcphmhihleneomklgfbbneokhjiaim";
 			const extensionLink = document.getElementById("extension-link");
 			if (extensionLink != null) {
 				extensionLink.href = extensionUrl;
