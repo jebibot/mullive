@@ -168,6 +168,12 @@ export default {
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 		<link rel="manifest" href="/manifest.webmanifest" />
 		<style nonce="${nonce}">
+			*,
+			*::before,
+			*::after {
+				box-sizing: border-box;
+			}
+
 			:root {
 				color-scheme: dark;
 			}
@@ -217,8 +223,7 @@ export default {
 			}
 
 			#chat-select {
-				margin: 4px;
-				margin-right: 32px;
+				margin: 4px 32px 4px 4px;
 				padding: 2px;
 			}
 
@@ -231,11 +236,8 @@ export default {
 				position: fixed;
 				top: 0;
 				right: 0;
-				padding: 6px;
-				border-bottom-left-radius: 8px;
-				line-height: 1;
+				border-radius: 0 0 0 8px;
 				background-color: #333;
-				cursor: pointer;
 			}
 
 			#chat-toggle svg {
@@ -244,12 +246,43 @@ export default {
 				fill: #777;
 			}
 
-			#chat-toggle:hover {
+			#chat-toggle:hover svg {
+				fill: #999;
+			}
+
+			#overlay {
+				display: none;
+				flex-direction: column;
+				position: fixed;
+				bottom: 0;
+				right: 0;
+				width: 350px;
+				border-radius: 8px 8px 0 0;
+				padding: 8px 20px 16px;
+				background-color: #333;
+				word-break: keep-all;
+			}
+
+			#overlay-close {
+				margin-left: auto;
+				font-size: 12px;
+			}
+
+			#overlay-button {
+				margin: 12px 16px 0;
 				background-color: #555;
 			}
 
-			#chat-toggle:hover svg {
-				fill: #999;
+			.button {
+				padding: 6px;
+				border-radius: 4px;
+				text-align: center;
+				line-height: 1;
+				cursor: pointer;
+			}
+
+			.button:hover {
+				background-color: #666 !important;
 			}
 
 			.box {
@@ -296,14 +329,24 @@ export default {
 				<iframe src=${JSON.stringify(initialChat?.chat || 'about:blank')} frameborder="0" scrolling="no" id="chat"></iframe>
 			</div>
 		</div>
-		<div id="chat-toggle">
+		<div id="chat-toggle" class="button">
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M512 240c0 114.9-114.6 208-256 208c-37.1 0-72.3-6.4-104.1-17.9c-11.9 8.7-31.3 20.6-54.3 30.6C73.6 471.1 44.7 480 16 480c-6.5 0-12.3-3.9-14.8-9.9c-2.5-6-1.1-12.8 3.4-17.4c0 0 0 0 0 0s0 0 0 0s0 0 0 0c0 0 0 0 0 0l.3-.3c.3-.3 .7-.7 1.3-1.4c1.1-1.2 2.8-3.1 4.9-5.7c4.1-5 9.6-12.4 15.2-21.6c10-16.6 19.5-38.4 21.4-62.9C17.7 326.8 0 285.1 0 240C0 125.1 114.6 32 256 32s256 93.1 256 208z"/></svg>
 		</div>
+		<div id="overlay">
+			<div id="overlay-close" class="button">X</div>
+			<div id="overlay-content">Mul.Live Plus 확장 프로그램을 설치하면 채팅, 치트키/퀵뷰, 구독 등 로그인 기능을 사용할 수 있습니다.</div>
+			<div id="overlay-button" class="button">확장 프로그램 설치</div>
+		</div>
 		<script type="text/javascript" nonce="${nonce}">
+			const hasExtension = ${JSON.stringify(hasExtension)};
 			const streams = document.getElementById("streams");
 			const chat = document.getElementById("chat");
 			const chatSelect = document.getElementById("chat-select");
 			const chatToggle = document.getElementById("chat-toggle");
+			const overlay = document.getElementById("overlay");
+			const overlayButton = document.getElementById("overlay-button");
+			const overlayClose = document.getElementById("overlay-close");
+			const overlayContent = document.getElementById("overlay-content");
 			const iframes = streams.querySelectorAll("iframe");
 			const n = iframes.length;
 			function adjustLayout() {
@@ -338,6 +381,17 @@ export default {
 				option.textContent = option.disabled ? \`\${name} [확장 프로그램 필요]\` : name;
 			}
 
+			function closeOverlay() {
+				overlay.style.display = "";
+				localStorage.setItem("seen-overlay", "true");
+			}
+
+			function showRefreshOverlay() {
+				overlayContent.textContent = "로그인 후 채팅을 새로고침 해주세요.";
+				overlayButton.textContent = "새로고침";
+				overlay.style.display = "flex";
+			}
+
 			adjustLayout();
 			window.addEventListener("resize", adjustLayout);
 			chat.addEventListener("load", adjustLayout);
@@ -348,17 +402,33 @@ export default {
 				chat.src = chat.src !== "about:blank" ? "about:blank" : chatSelect.value;
 			});
 
+			overlayClose.addEventListener("click", closeOverlay);
+			overlayButton.addEventListener("click", () => {
+				switch (overlayButton.textContent) {
+					case "확장 프로그램 설치":
+						window.open("${extension}");
+						break;
+					case "새로고침":
+						chat.src = chatSelect.value;
+						break;
+				}
+				closeOverlay();
+			});
+			if (!hasExtension && n && localStorage.getItem("seen-overlay") !== "true") {
+				overlay.style.display = "flex";
+			}
+
 			document.addEventListener("securitypolicyviolation", (e) => {
 				if (e.blockedURI === "https://nid.naver.com") {
 					window.open("https://nid.naver.com/nidlogin.login");
-					chat.src = "about:blank";
+					showRefreshOverlay();
 				}
 			});
 			window.addEventListener("message", (e) => {
 				if (e.origin === "https://play.sooplive.co.kr") {
 					switch (e.data.type) {
-						case "closeChat":
-							chat.src = "about:blank";
+						case "showRefreshOverlay":
+							showRefreshOverlay();
 							break;
 					}
 				}
