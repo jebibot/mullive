@@ -312,7 +312,7 @@ export default {
 			</div>
 			<div id="chat-container">
 				<select id="chat-select">
-					${stream.map((s) => `<option value=${JSON.stringify(s.chat)}${s.extension && !hasExtension ? ` disabled>${s.id} [확장 프로그램 필요]` : `${s === initialChat ? ' selected' : ''}>${s.id}`}</option>`).join('\n\t\t\t\t\t')}
+					${stream.map((s) => `<option value=${JSON.stringify(s.chat)}${hasExtension || !s.extension ? `${s === initialChat ? ' selected' : ''}>${s.id}` : ` disabled>${s.id} [확장 프로그램 필요]`}</option>`).join('\n\t\t\t\t\t')}
 				</select>
 				<iframe src=${JSON.stringify((!initialChat?.extension && initialChat?.chat) || 'about:blank')} frameborder="0" scrolling="no" id="chat"></iframe>
 			</div>
@@ -431,11 +431,7 @@ export default {
 							}
 							break;
 						case "PupdateBroadInfo":
-							for (const o of chatSelect.children) {
-								if (o.textContent === e.data.data.id) {
-									o.textContent = e.data.data.nick;
-								}
-							}
+							setName(Array.prototype.findIndex.call(iframes, (f) => e.source === f.contentWindow), e.data.data.nick);
 							break;
 						case "showRefreshOverlay":
 							showRefreshOverlay();
