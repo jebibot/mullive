@@ -164,7 +164,7 @@ export default {
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta name="description" content="여러 치지직, SOOP, 트위치, 유튜브 방송을 함께 볼 수 있습니다." />
+		<meta name="description" content="여러 치지직, 숲(SOOP), 트위치, 유튜브 방송을 함께 볼 수 있습니다." />
 		<meta name="keywords" content="Twitch,CHZZK,숲,아프리카TV,AfreecaTV,YouTube,스트리머,streamer,멀티뷰,multiview,multistream" />
 		<title>Mul.Live - 멀티뷰</title>
 		<link rel="icon" href="/favicon.ico" sizes="32x32" />
@@ -307,7 +307,7 @@ export default {
 								.join('\n\t\t\t\t')
 						: `<div>
 					<h1>Mul.Live - 멀티뷰</h1>
-					<div>여러 치지직, SOOP, 트위치, 유튜브 방송을 함께 볼 수 있습니다.</div>
+					<div>여러 치지직, 숲(SOOP), 트위치, 유튜브 방송을 함께 볼 수 있습니다.</div>
 					<div>다음을 /로 구분하여 주소 뒤에 붙여주세요.</div>
 					<ul>
 						<li>치지직 UID</li>
