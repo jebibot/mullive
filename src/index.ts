@@ -23,6 +23,7 @@ export interface Env {
 	//
 	// Example binding to a Queue. Learn more at https://developers.cloudflare.com/queues/javascript-apis/
 	// MY_QUEUE: Queue;
+	ASSETS: Fetcher;
 }
 
 interface Stream {
@@ -157,6 +158,10 @@ export default {
 		const hasExtension = request.headers.has('x-has-extension');
 		const parts = url.pathname.split('/');
 		const stream = (await Promise.all(parts.map((s) => parseStream(s, url.hostname, hasExtension)))).filter(isNotUndefined);
+		if (stream.length === 0) {
+			return env.ASSETS.fetch(request);
+		}
+
 		const initialChat = stream.find((s) => hasExtension || !s.extension);
 		const nonce = crypto.randomUUID();
 		const html = `<!DOCTYPE html>
@@ -290,43 +295,17 @@ export default {
 			#overlay-button:hover {
 				background-color: #666;
 			}
-
-			.box {
-				margin-top: 16px;
-			}
 		</style>
 	</head>
 	<body>
 		<div class="container">
 			<div id="streams">
-				${
-					stream.length > 0
-						? stream
-								.map(
-									(s) =>
-										`<iframe src=${JSON.stringify(s.player)} name=${JSON.stringify(s.id)} frameborder="0" scrolling="no" allowfullscreen="true"></iframe>`,
-								)
-								.join('\n\t\t\t\t')
-						: `<div>
-					<h1>Mul.Live - 멀티뷰</h1>
-					<div>여러 치지직, 숲(SOOP), 트위치, 유튜브 방송을 함께 볼 수 있습니다.</div>
-					<div>다음을 /로 구분하여 주소 뒤에 붙여주세요.</div>
-					<ul>
-						<li>치지직 UID</li>
-						<li>SOOP 아이디</li>
-						<li>t:Twitch 아이디</li>
-						<li>y:YouTube 핸들, 맞춤 URL, 채널 또는 영상 ID</li>
-					</ul>
-					<div><b>예시:</b> https://mul.live/abcdef1234567890abcdef1234567890/soop/t:twitch/y:@youtube</div>
-					<div class="box"><a id="extension-link" target="_blank"><u>Mul.Live Plus 확장프로그램</u></a>을 설치하면 채팅 등 로그인 기능을 사용할 수 있습니다.</div>
-					<div class="box">
-						<a href="https://www.chz.app/" target="_blank">치즈.앱</a> |
-						<a href="https://github.com/jebibot/mullive" target="_blank">GitHub</a> |
-						<a href="https://discord.gg/9kq3UNKAkz" target="_blank">Discord</a> |
-						<a href="https://www.chz.app/privacy" target="_blank">개인정보처리방침</a>
-					</div>
-				</div>`
-				}
+				${stream
+					.map(
+						(s) =>
+							`<iframe src=${JSON.stringify(s.player)} name=${JSON.stringify(s.id)} frameborder="0" scrolling="no" allowfullscreen="true"></iframe>`,
+					)
+					.join('\n\t\t\t\t')}
 			</div>
 			<div id="chat-container">
 				<select id="chat-select" aria-label="채팅">
@@ -349,10 +328,6 @@ export default {
 			const extensionUrl = /firefox/i.test(navigator.userAgent)
 				? "https://addons.mozilla.org/addon/mullive/"
 				: "https://chromewebstore.google.com/detail/pahcphmhihleneomklgfbbneokhjiaim";
-			const extensionLink = document.getElementById("extension-link");
-			if (extensionLink != null) {
-				extensionLink.href = extensionUrl;
-			}
 
 			const streams = document.getElementById("streams");
 			const chat = document.getElementById("chat");

@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="description" content="여러 치지직, 숲(SOOP), 트위치, 유튜브 방송을 함께 볼 수 있습니다." />
+		<meta name="keywords" content="Twitch,CHZZK,숲,아프리카TV,AfreecaTV,YouTube,스트리머,streamer,멀티뷰,multiview,multistream" />
+		<title>Mul.Live - 멀티뷰</title>
+		<link rel="icon" href="/favicon.ico" sizes="32x32" />
+		<link rel="icon" href="/icon.svg" type="image/svg+xml" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+		<link rel="manifest" href="/manifest.webmanifest" />
+		<style>
+			:root {
+				color-scheme: dark;
+			}
+
+			html,
+			body {
+				margin: 0;
+				padding: 0;
+				width: 100%;
+				height: 100%;
+				color: white;
+				background-color: black;
+				overflow: hidden;
+			}
+
+			.container {
+				display: flex;
+				width: 100%;
+				height: 100%;
+				align-items: center;
+				justify-content: center;
+			}
+
+			.box {
+				margin-top: 16px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+            <div>
+                <h1>Mul.Live - 멀티뷰</h1>
+                <div>여러 치지직, 숲(SOOP), 트위치, 유튜브 방송을 함께 볼 수 있습니다.</div>
+                <div>다음을 /로 구분하여 주소 뒤에 붙여주세요.</div>
+                <ul>
+                    <li>치지직 UID</li>
+                    <li>SOOP 아이디</li>
+                    <li>t:Twitch 아이디</li>
+                    <li>y:YouTube 핸들, 맞춤 URL, 채널 또는 영상 ID</li>
+                </ul>
+                <div><b>예시:</b> https://mul.live/abcdef1234567890abcdef1234567890/soop/t:twitch/y:@youtube</div>
+                <div class="box"><a id="extension-link" target="_blank"><u>Mul.Live Plus 확장프로그램</u></a>을 설치하면 채팅 등 로그인 기능을 사용할 수 있습니다.</div>
+                <div class="box">
+                    <a href="https://www.chz.app/" target="_blank">치즈.앱</a> |
+                    <a href="https://github.com/jebibot/mullive" target="_blank">GitHub</a> |
+                    <a href="https://discord.gg/9kq3UNKAkz" target="_blank">Discord</a> |
+                    <a href="https://www.chz.app/privacy" target="_blank">개인정보처리방침</a>
+                </div>
+            </div>
+		</div>
+		<script type="text/javascript">
+			const extensionUrl = /firefox/i.test(navigator.userAgent)
+				? "https://addons.mozilla.org/addon/mullive/"
+				: "https://chromewebstore.google.com/detail/pahcphmhihleneomklgfbbneokhjiaim";
+			const extensionLink = document.getElementById("extension-link");
+            extensionLink.href = extensionUrl;
+		</script>
+	</body>
+</html>
