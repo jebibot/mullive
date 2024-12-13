@@ -196,9 +196,8 @@ export default {
 				width: 100%;
 				height: 100%;
 				color: white;
-				background: url("/bg.webp") center / cover;
+				background: ${stream.length === 0 ? 'url("/bg.webp") center / cover' : 'black'};
 				overflow: hidden;
-
 			}
 
 			hr {
@@ -483,7 +482,9 @@ export default {
 						</div>
 					</a>
 					<div class="footer">
-						<img src="/argo.png" width="140px" />
+						<a href="https://github.com/jebibot" target="_blank">
+							<img src="/argo.png" width="140px" />
+						</a>
 						<div class="footer-list">
 							<a href="https://github.com/jebibot/mullive" target="_blank" class="footer-item">Github</a>
 							<a href="https://discord.gg/9kq3UNKAkz" class="footer-item">Discord</a>
