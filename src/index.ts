@@ -300,12 +300,7 @@ export default {
 	<body>
 		<div class="container">
 			<div id="streams">
-				${stream
-					.map(
-						(s) =>
-							`<iframe src=${JSON.stringify(s.player)} name=${JSON.stringify(s.id)} frameborder="0" scrolling="no" allowfullscreen="true"></iframe>`,
-					)
-					.join('\n\t\t\t\t')}
+				${stream.map((s) => `<iframe src=${JSON.stringify(s.player)} name=${JSON.stringify(s.id)} frameborder="0" scrolling="no" allowfullscreen="true"></iframe>`).join('\n\t\t\t\t')}
 			</div>
 			<div id="chat-container">
 				<select id="chat-select" aria-label="채팅">
