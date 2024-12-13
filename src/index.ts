@@ -242,6 +242,7 @@ export default {
 				right: 0;
 				border-radius: 0 0 0 8px;
 				background-color: #333;
+				transition: opacity 150ms ease-in-out;
 			}
 
 			#chat-toggle svg {
@@ -250,8 +251,8 @@ export default {
 				fill: #777;
 			}
 
-			#chat-toggle:hover svg {
-				fill: #999;
+			#chat-toggle:hover {
+				opacity: 1 !important;
 			}
 
 			#overlay {
@@ -285,8 +286,9 @@ export default {
 				cursor: pointer;
 			}
 
-			.button:hover {
-				background-color: #666 !important;
+			.button:hover,
+			#overlay-button:hover {
+				background-color: #666;
 			}
 
 			.box {
@@ -414,6 +416,9 @@ export default {
 			chatToggle.addEventListener("click", () => {
 				chat.src = chat.src !== "about:blank" ? "about:blank" : chatSelect.value;
 			});
+			setTimeout(() => {
+				chatToggle.style.opacity = 0;
+			}, 10000);
 
 			overlayClose.addEventListener("click", closeOverlay);
 			overlayButton.addEventListener("click", () => {
