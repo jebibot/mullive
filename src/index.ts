@@ -446,7 +446,7 @@ export default {
 				margin: 0px auto 0;
 				padding: 8px;
 				animation: slideInFromBottom 0.75s forwards;
-				animation-delay: 1s;
+				animation-delay: 4s;
 			}
 
 			.plugin-img {
@@ -509,7 +509,7 @@ export default {
 				border-radius: 120px;
 				animation: slideInFromBottom 1s forwards, moveBackgroundImage 10s linear infinite, slideOut 1.5s forwards 3.2s;
 				overflow: hidden;
-				box-shadow: 0 0 16px rgba(0, 0, 0, 0.5);
+				box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
 				opacity: 0;
 				gap: 20px;
 			}
