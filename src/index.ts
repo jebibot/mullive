@@ -198,10 +198,29 @@ export default {
 				overflow: hidden;
 			}
 
+			svg {
+				width: 16px;
+				height: 16px;
+				fill: #ccc;
+			}
+
 			.container {
 				display: flex;
+				position: relative;
 				width: 100%;
 				height: 100%;
+			}
+
+			.button {
+				padding: 6px;
+				border-radius: 4px;
+				text-align: center;
+				line-height: 1;
+				cursor: pointer;
+			}
+
+			.button:hover {
+				background-color: #666 !important;
 			}
 
 			#streams {
@@ -227,13 +246,10 @@ export default {
 				height: 100%;
 			}
 
-			#chat-container:has(#chat[src="about:blank"]) {
-				display: none;
-			}
-
 			#chat-select {
 				margin: 4px 32px 4px 4px;
 				padding: 2px;
+				outline: none;
 			}
 
 			#chat {
@@ -246,18 +262,18 @@ export default {
 				top: 0;
 				right: 0;
 				border-radius: 0 0 0 8px;
-				background-color: #333;
+				background-color: #333 !important;
 				transition: opacity 150ms ease-in-out;
-			}
-
-			#chat-toggle svg {
-				width: 16px;
-				height: 16px;
-				fill: #777;
 			}
 
 			#chat-toggle:hover {
 				opacity: 1 !important;
+			}
+
+			#chat-container:has(#chat[src="about:blank"]),
+			#chat-container:has(#chat[src="about:blank"]) + #chat-toggle .close,
+			#chat-container:not(:has(#chat[src="about:blank"])) + #chat-toggle .open {
+				display: none;
 			}
 
 			#overlay {
@@ -270,30 +286,17 @@ export default {
 				border-radius: 8px 8px 0 0;
 				padding: 8px 20px 16px;
 				background-color: #333;
+				font-size: 14px;
 				word-break: keep-all;
 			}
 
 			#overlay-close {
 				margin-left: auto;
-				font-size: 12px;
 			}
 
 			#overlay-button {
 				margin: 12px 16px 0;
 				background-color: #555;
-			}
-
-			.button {
-				padding: 6px;
-				border-radius: 4px;
-				text-align: center;
-				line-height: 1;
-				cursor: pointer;
-			}
-
-			.button:hover,
-			#overlay-button:hover {
-				background-color: #666;
 			}
 		</style>
 	</head>
@@ -308,12 +311,15 @@ export default {
 				</select>
 				<iframe src=${JSON.stringify((!initialChat?.extension && initialChat?.chat) || 'about:blank')} frameborder="0" scrolling="no" id="chat"></iframe>
 			</div>
-		</div>
-		<div id="chat-toggle" class="button">
-			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M512 240c0 114.9-114.6 208-256 208c-37.1 0-72.3-6.4-104.1-17.9c-11.9 8.7-31.3 20.6-54.3 30.6C73.6 471.1 44.7 480 16 480c-6.5 0-12.3-3.9-14.8-9.9c-2.5-6-1.1-12.8 3.4-17.4c0 0 0 0 0 0s0 0 0 0s0 0 0 0c0 0 0 0 0 0l.3-.3c.3-.3 .7-.7 1.3-1.4c1.1-1.2 2.8-3.1 4.9-5.7c4.1-5 9.6-12.4 15.2-21.6c10-16.6 19.5-38.4 21.4-62.9C17.7 326.8 0 285.1 0 240C0 125.1 114.6 32 256 32s256 93.1 256 208z"/></svg>
+			<div id="chat-toggle" class="button">
+				<svg class="open" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M512 240c0 114.9-114.6 208-256 208c-37.1 0-72.3-6.4-104.1-17.9c-11.9 8.7-31.3 20.6-54.3 30.6C73.6 471.1 44.7 480 16 480c-6.5 0-12.3-3.9-14.8-9.9c-2.5-6-1.1-12.8 3.4-17.4c0 0 0 0 0 0s0 0 0 0s0 0 0 0c0 0 0 0 0 0l.3-.3c.3-.3 .7-.7 1.3-1.4c1.1-1.2 2.8-3.1 4.9-5.7c4.1-5 9.6-12.4 15.2-21.6c10-16.6 19.5-38.4 21.4-62.9C17.7 326.8 0 285.1 0 240C0 125.1 114.6 32 256 32s256 93.1 256 208z"/></svg>
+				<svg class="close" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>
+			</div>
 		</div>
 		<div id="overlay">
-			<div id="overlay-close" class="button">X</div>
+			<div id="overlay-close" class="button">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>
+			</div>
 			<div id="overlay-content">Mul.Live Plus 확장 프로그램을 설치하면 채팅, 치트키/퀵뷰, 구독 등 로그인 기능을 사용할 수 있습니다.</div>
 			<div id="overlay-button" class="button">확장 프로그램 설치</div>
 		</div>
