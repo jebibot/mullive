@@ -164,6 +164,11 @@ export default {
 
 		const initialChat = stream.find((s) => hasExtension || !s.extension);
 		const nonce = crypto.randomUUID();
+
+		const extensionUrl = /firefox/i.test(navigator.userAgent)
+			? 'https://addons.mozilla.org/addon/mullive/'
+			: 'https://chromewebstore.google.com/detail/pahcphmhihleneomklgfbbneokhjiaim';
+
 		const html = `<!DOCTYPE html>
 <html lang="ko">
 	<head>
@@ -185,6 +190,11 @@ export default {
 				font-family: Pretendard;
 			}
 
+			select:active,
+			select:focus {
+				outline: none;
+			}
+
 			:root {
 				color-scheme: dark;
 			}
@@ -194,6 +204,23 @@ export default {
 				text-decoration: none;
 			}
 
+			button {
+				background: none;
+				border: none;
+				cursor: pointer;
+				transition: 0.25s;
+			}
+
+			button:active,
+			button:focus {
+				outline: none;
+			}
+
+			button:active {
+				transform: scale(0.95);
+				transition: 0.25s;
+			}
+
 			html,
 			body {
 				margin: 0;
@@ -201,7 +228,7 @@ export default {
 				width: 100%;
 				height: 100%;
 				color: white;
-				background: ${stream.length === 0 ? 'url("/bg.webp") center / cover' : 'black'};
+				background: black;
 				overflow: hidden;
 			}
 
@@ -239,15 +266,65 @@ export default {
 				flex-direction: column;
 				width: 350px;
 				height: 100%;
+				position: relative;
 			}
 
 			#chat-container:has(#chat[src="about:blank"]) {
 				display: none;
 			}
 
+			#chat-select-container{
+				display: flex;
+				align-items: center;
+				margin: 6px;
+				gap: 6px;
+			}
+
+			#chat-icon {
+				width: 16px;
+				position: absolute;
+				left: 20px;
+				height: 16px;
+			}
+
+
 			#chat-select {
-				margin: 4px 32px 4px 4px;
-				padding: 2px;
+				background: #333;
+				background-image: url("/assets/chevron-down.svg");
+				background-repeat: no-repeat;
+				background-position: right 10px center;
+				background-size: 14px;
+				color: white;
+				border: 1px solid #555;
+				border-radius: 40px;
+				height: 40px;
+				padding: 8px 12px 8px 36px;
+				width: 100%;
+				font-size: 12px;
+				-webkit-appearance: none;
+				appearance: none;
+			}
+
+			#chat-close {
+				width: 40px;
+				height: 40px;
+				display: flex;
+				background-color: #555;
+				border-radius: 40px;
+				justify-content: center;
+				align-items: center;
+				flex-shrink: 0;
+				line-height: 1;
+				transition: 0.25s;
+			}
+
+			#chat-close:hover {
+				background-color: #d13434;
+			}
+
+			#chat-close img {
+				width: 18px;
+				height: 18px;
 			}
 
 			#chat {
@@ -255,46 +332,61 @@ export default {
 				width: 100%;
 			}
 
+			#fullscreen {
+				position: fixed;
+				top: 6px;
+				right: 56px;
+				border-radius: 48px;
+				background-color:rgba(0, 0, 0, 0.53);
+				border: 1px solid rgba(255, 255, 255, 0.1);
+				width: 48px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 48px;
+				transition: opacity 150ms ease-in-out;
+				opacity: 1;
+				animation: fadeOut 0.5s forwards;
+				animation-delay: 4s;
+				transition: 0.25s;
+			}
+
+			#fullscreen img {
+				width: 20px;
+				height: 20px;
+				margin-bottom: 1px;
+				fill: #777;
+			}
+
+			#fullscreen:hover {
+				opacity: 1 !important;
+				transition: 0.25s;
+			}
+			
 			#chat-toggle {
 				position: fixed;
-				top: 0;
-				right: 0;
-				border-radius: 0 0 0 8px;
-				background-color: #333;
+				top: 6px;
+				right: 6px;
+				border-radius: 48px;
+				background-color:rgba(0, 0, 0, 0.53);
+				border: 1px solid rgba(255, 255, 255, 0.1);
+				width: 48px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 48px;
 				transition: opacity 150ms ease-in-out;
 			}
 
-			#chat-toggle svg {
-				width: 16px;
-				height: 16px;
+			#chat-toggle img {
+				width: 20px;
+				height: 20px;
+				margin-bottom: 1px;
 				fill: #777;
 			}
 
 			#chat-toggle:hover {
 				opacity: 1 !important;
-			}
-
-			#overlay {
-				display: none;
-				flex-direction: column;
-				position: fixed;
-				bottom: 0;
-				right: 0;
-				width: 350px;
-				border-radius: 8px 8px 0 0;
-				padding: 8px 20px 16px;
-				background-color: #333;
-				word-break: keep-all;
-			}
-
-			#overlay-close {
-				margin-left: auto;
-				font-size: 12px;
-			}
-
-			#overlay-button {
-				margin: 12px 16px 0;
-				background-color: #555;
 			}
 
 			.button {
@@ -305,8 +397,7 @@ export default {
 				cursor: pointer;
 			}
 
-			.button:hover,
-			#overlay-button:hover {
+			.button:hover {
 				background-color: #666;
 			}
 
@@ -314,84 +405,52 @@ export default {
 				margin-top: 16px;
 			}
 
-			#hero {
-				margin-bottom: 4px;
-				text-align: center;
+			#overlay {
+				display: none;
 			}
 
-			#hero img {
-				width: 300px;
+			@keyframes fadeOut {
+				0% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
 			}
 
-			.description{
-				line-height: 1.5;
-				text-align: center;
-				margin-bottom: 16px;
-				opacity: 0.8;
-			}
-
-			.tag {
-				line-height: 1;
-				font-size: 14px;
-				display: inline-block;
-				padding: 8px 12px;
-				border-radius: 50px;
-				border: 1px solid #ffffff77;
-				background-color: #ffffff11;
-				font-weight: bold;
-			}
-
-			.platforms {
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				width: fit-content;
-				padding: 10px 18px;
-				border-radius: 12px;
-				margin: 0 auto 24px;
-				gap: 8px;
-			}
-
-			.underline {
-				border-bottom: 1px solid #ffffff;
-			}
-
-			.info{
-				background-color:rgba(255, 255, 255, 0.07);
-				border: 1px solid #ffffff33;
-				padding: 16px 18px;
-				border-radius: 16px;
-				font-size: 14px;
-				line-height: 1.8;
-			}
-
-			.info-item{
-				display: flex;
-				align-items: center;
-				gap: 4px;
-			}
-
-			.info-example{
-				margin-top: 4px;
-				font-size: 12px;
-				opacity: 0.8;
+			@keyframes slideInFromBottom {
+				0% {
+					opacity: 0;
+					transform: translateY(150%);
+				}
+				100% {
+					opacity: 1;
+					transform: translateY(0);
+				}
 			}
 
 			.plugin {
+				opacity: 0;
+				position: fixed;
+				bottom: 40px;
+				width: 400px;
+				left: calc(50% - 200px);
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				background-color:rgba(255, 255, 255, 0.07);
+				background-color: rgba(40, 40, 40, 0.5);
+				backdrop-filter: blur(8px);
 				border: 1px solid #ffffff33;
 				border-radius: 32px;
-				width: fit-content;
 				overflow: hidden;
 				margin: 0px auto 0;
 				padding: 8px;
+				animation: slideInFromBottom 0.75s forwards;
+				animation-delay: 1s;
 			}
 
-			.plugin-img { 
-				background-color:rgb(255, 255, 255);
+			.plugin-img {
+				background-color: rgb(255, 255, 255);
 				border-radius: 32px;
 				display: flex;
 				align-items: center;
@@ -408,6 +467,22 @@ export default {
 			.plugin-info {
 				line-height: 1.5;
 				margin-right: 12px;
+				flex: 1;
+			}
+
+			.plugin-close {
+				background-color: #555;
+				border-radius: 32px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				padding: 6px;
+				cursor: pointer;
+			}
+
+			.plugin-close img {
+				width: 16px;
+				height: 16px;
 			}
 
 			.plugin-info-title {
@@ -420,147 +495,58 @@ export default {
 				opacity: 0.8;
 			}
 
-
-			.footer{
-				text-align: center;
-				margin-top: 24px;
-			}
-
-			.footer-list{
-				display: flex;
-				justify-content: center;
-				gap: 12px;
-				margin-top: 4px;
-			}
-
-			.footer-item{
-				font-size: 12px;
-				opacity: 0.8;
-			}
-
-			#hero {
-				margin-bottom: 4px;
-				text-align: center;
-			}
-
-			#hero img {
-				width: 300px;
-			}
-
-			.description{
-				line-height: 1.5;
-				text-align: center;
-				margin-bottom: 16px;
-				opacity: 0.8;
-			}
-
-			.tag {
-				line-height: 1;
-				font-size: 14px;
-				display: inline-block;
-				padding: 8px 12px;
-				border-radius: 50px;
-				border: 1px solid #ffffff77;
-				background-color: #ffffff11;
-				font-weight: bold;
-			}
-
-			.platforms {
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				width: fit-content;
-				padding: 10px 18px;
-				border-radius: 12px;
-				margin: 0 auto 24px;
-				gap: 8px;
-			}
-
-			.underline {
-				border-bottom: 1px solid #ffffff;
-			}
-
-			.info{
-				background-color:rgba(255, 255, 255, 0.07);
-				border: 1px solid #ffffff33;
-				padding: 16px 18px;
-				border-radius: 16px;
-				font-size: 14px;
-				line-height: 1.8;
-			}
-
-			.info-item{
-				display: flex;
-				align-items: center;
-				gap: 4px;
-			}
-
-			.info-example{
-				margin-top: 4px;
-				font-size: 12px;
-				opacity: 0.8;
-			}
-
-			.plugin {
+			#mullive-overlay {
+				position: fixed;
+				left: calc(50% - 200px);
+				bottom: 40px;
+				width: 400px;
+				height: 100px;
+				z-index: 1000;
+				background: url("/bg.webp") no-repeat center center;
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				background-color:rgba(255, 255, 255, 0.07);
-				border: 1px solid #ffffff33;
-				border-radius: 32px;
-				width: fit-content;
+				border-radius: 120px;
+				animation: slideInFromBottom 1s forwards, moveBackgroundImage 10s linear infinite, slideOut 1.5s forwards 3.2s;
 				overflow: hidden;
-				margin: 0px auto 0;
-				padding: 8px;
+				box-shadow: 0 0 16px rgba(0, 0, 0, 0.5);
+				opacity: 0;
+				gap: 20px;
 			}
 
-			.plugin-img { 
-				background-color:rgb(255, 255, 255);
-				border-radius: 32px;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				margin-right: 8px;
-				padding: 8px;
+			#mullive-overlay .logo {
+				width: 160px;
+				animation: slideInFromBottom 0.75s forwards 0.25s, slideOut 2s forwards 3.1s;
+				opacity: 0;
 			}
 
-			.plugin-img img {
-				width: 24px;
-				height: 24px;
+			#mullive-overlay .argo {
+				width: 80px;
+				animation: slideInFromBottom 0.75s forwards 0.5s, slideOut 0.75s forwards 3s;
+				opacity: 0;
 			}
 
-			.plugin-info {
-				line-height: 1.5;
-				margin-right: 12px;
+			@keyframes moveBackgroundImage {
+				0% {
+					background-position: 20% 20%;
+				}
+				100% {
+					background-position: 100% 100%;
+				}	
+			
 			}
 
-			.plugin-info-title {
-				font-size: 16px;
-				font-weight: bold;
+			@keyframes slideOut {
+				0% {
+					transform: translateY(0);
+					opacity: 1;
+				}
+				100% {
+					transform: translateY(150%);
+					opacity: 0;
+				}
 			}
 
-			.plugin-info-description {
-				font-size: 14px;
-				opacity: 0.8;
-			}
-
-
-			.footer{
-				text-align: center;
-				margin-top: 24px;
-			}
-
-			.footer-list{
-				display: flex;
-				justify-content: center;
-				gap: 12px;
-				margin-top: 4px;
-			}
-
-			.footer-item{
-				font-size: 12px;
-				opacity: 0.8;
-			}
 		</style>
 	</head>
 	<body>
@@ -574,90 +560,73 @@ export default {
 										`<iframe src=${JSON.stringify(s.player)} name=${JSON.stringify(s.id)} frameborder="0" scrolling="no" allowfullscreen="true"></iframe>`,
 								)
 								.join('\n\t\t\t\t')
-						: `<div>
-					<div id="hero"><img src="/mullive.svg" /></div>
-					<div class="description">다양한 플랫폼을 위한 멀티뷰 서비스, <span class="underline">mul.live</span></div>
-					<div class="platforms">
-						<div class="tag">지원 플랫폼</div>
-						<img src="/platform/chzzk.svg" width="24" height="24" />
-						<img src="/platform/soop.svg" width="24" height="24" />
-						<img src="/platform/twitch.svg" width="24" height="24" />
-						<img src="/platform/youtube.svg" width="24" height="24" />
-					</div>
-					<div class="info">
-						다음을 / 로 구분하여 주소 뒤에 붙여주세요!<br />
-						<div class="info-item">
-							<img src="/platform/chzzk.svg" width="20" height="20" /> 치지직 UID
-						</div>
-						<div class="info-item">
-							<img src="/platform/soop.svg" width="20" height="20" /> SOOP ID
-						</div>
-						<div class="info-item">
-							<img src="/platform/twitch.svg" width="20" height="20" /> 트위치 ID ( t: 를 붙여주세요 )
-						</div>
-						<div class="info-item">
-							<img src="/platform/youtube.svg" width="20" height="20" /> 유튜브 ID ( y: 를 붙여주세요 )
-						</div>
-						<div class="info-example">
-							예) https://mul.live/치지직_UID/SOOP_ID/t:twitch/y:@youtube
-						</div>
-					</div>
-					<br />
-					<a class="plugin" id="extension-link" target="_blank">
-						<div class="plugin-img">
-							<img src="/plugin.png"/>
-						</div>
-						<div class="plugin-info">
-							<div class="plugin-info-title">mul.live PLUS</div>
-							<div class="plugin-info-description">설치 후 채팅 등 로그인 기능을 사용할 수 있습니다</div>
-						</div>
-					</a>
-					<div class="footer">
-						<a href="https://github.com/jebibot" target="_blank">
-							<img src="/argo.png" width="140px" />
-						</a>
-						<div class="footer-list">
-							<a href="https://github.com/jebibot/mullive" target="_blank" class="footer-item">Github</a>
-							<a href="https://discord.gg/9kq3UNKAkz" class="footer-item">Discord</a>
-							<a href="https://www.chz.app/privacy" class="footer-item">개인정보처리방침</a>
-							<a href="https://www.chz.app/" target="_blank" class="footer-item">치즈.앱</a>
-						</div>
-					</div>
-				</div>`
+						: `<div class="box">스트림 없음</div>`
 				}
 			</div>
 			<div id="chat-container">
-				<select id="chat-select" aria-label="채팅">
-					${stream.map((s) => `<option value=${JSON.stringify(s.chat)}${hasExtension || !s.extension ? `>${s.id}` : ` disabled>${s.id} [확장 프로그램 필요]`}</option>`).join('\n\t\t\t\t\t')}
-				</select>
+				<div id="chat-select-container">
+					<img src="/assets/chat.svg" alt="채팅" id="chat-icon" />
+					<select id="chat-select" aria-label="채팅">
+						${stream.map((s) => `<option value=${JSON.stringify(s.chat)}${hasExtension || !s.extension ? `>${s.id}` : ` disabled>${s.id} [확장 프로그램 필요]`}</option>`).join('\n\t\t\t\t\t')}
+					</select>
+					<button id="chat-close" class="button">
+						<img src="/assets/xmark.svg" alt="채팅닫기" />
+					</button>
+				</div>
 				<iframe src=${JSON.stringify((!initialChat?.extension && initialChat?.chat) || 'about:blank')} frameborder="0" scrolling="no" id="chat"></iframe>
 			</div>
 		</div>
-		<div id="chat-toggle" class="button">
-			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M512 240c0 114.9-114.6 208-256 208c-37.1 0-72.3-6.4-104.1-17.9c-11.9 8.7-31.3 20.6-54.3 30.6C73.6 471.1 44.7 480 16 480c-6.5 0-12.3-3.9-14.8-9.9c-2.5-6-1.1-12.8 3.4-17.4c0 0 0 0 0 0s0 0 0 0s0 0 0 0c0 0 0 0 0 0l.3-.3c.3-.3 .7-.7 1.3-1.4c1.1-1.2 2.8-3.1 4.9-5.7c4.1-5 9.6-12.4 15.2-21.6c10-16.6 19.5-38.4 21.4-62.9C17.7 326.8 0 285.1 0 240C0 125.1 114.6 32 256 32s256 93.1 256 208z"/></svg>
-		</div>
+		<button id="fullscreen" class="button">
+			<img src="/assets/pointing-out.svg" alt="전체화면" />
+		</button>
+		<button id="chat-toggle" class="button">
+			<img src="/assets/chat.svg" alt="채팅" />
+		</button>
 		<div id="overlay">
-			<div id="overlay-close" class="button">X</div>
-			<div id="overlay-content">Mul.Live Plus 확장 프로그램을 설치하면 채팅, 치트키/퀵뷰, 구독 등 로그인 기능을 사용할 수 있습니다.</div>
-			<div id="overlay-button" class="button">확장 프로그램 설치</div>
+			<div class="plugin">
+				<a class="plugin-img" target="_blank" rel="noopener noreferrer" href="${extensionUrl}">
+					<img src="/plugin.png" />
+				</a>
+				<a class="plugin-info" target="_blank" rel="noopener noreferrer" href="${extensionUrl}">
+					<div class="plugin-info-title">mul.live PLUS</div>
+					<div class="plugin-info-description">설치 후 채팅 등 로그인 기능을 사용할 수 있습니다</div>
+				</a>
+				<div class="plugin-close" id="overlay-close">
+					<img src="/assets/xmark.svg" alt="닫기" />
+				</div>
+			</div>
+		</div>
+		<div id="mullive-overlay">
+				<img class="logo" src="/mullive.svg" alt="Mul.Live" />
+				<img class="argo" src="/argo.png" alt="Argo" />
 		</div>
 		<script type="text/javascript" nonce="${nonce}">
 			let init = true;
 			const hasExtension = ${JSON.stringify(hasExtension)};
-			const extensionUrl = /firefox/i.test(navigator.userAgent)
-				? "https://addons.mozilla.org/addon/mullive/"
-				: "https://chromewebstore.google.com/detail/pahcphmhihleneomklgfbbneokhjiaim";
 
 			const streams = document.getElementById("streams");
 			const chat = document.getElementById("chat");
 			const chatSelect = document.getElementById("chat-select");
 			const chatToggle = document.getElementById("chat-toggle");
+			const chatClose = document.getElementById("chat-close");
+
+			const fullScreenToggle = document.getElementById("fullscreen");
+
 			const overlay = document.getElementById("overlay");
 			const overlayButton = document.getElementById("overlay-button");
 			const overlayClose = document.getElementById("overlay-close");
 			const overlayContent = document.getElementById("overlay-content");
 			const iframes = streams.querySelectorAll("iframe");
 			const n = iframes.length;
+
+			function toggleFullScreen() {
+				if (!document.fullscreenElement) {
+					document.documentElement.requestFullscreen();
+				} else {
+					document.exitFullscreen();
+				}
+			}
+
 			function adjustLayout() {
 				const width = window.innerWidth - 8 - (chat.src !== "about:blank" ? 350 : 0);
 				const height = window.innerHeight - 8;
@@ -691,7 +660,7 @@ export default {
 			}
 
 			function closeOverlay() {
-				overlay.style.display = "";
+				overlay.style.display = "none";
 				localStorage.setItem("seen-overlay", "true");
 			}
 
@@ -701,15 +670,34 @@ export default {
 				overlay.style.display = "flex";
 			}
 
+			fullScreenToggle.addEventListener("click", toggleFullScreen);
+
 			adjustLayout();
 			window.addEventListener("resize", adjustLayout);
 			chat.addEventListener("load", adjustLayout);
 			chatSelect.addEventListener("change", (e) => {
 				chat.src = e.target.value;
 			})
+
+			chatClose.addEventListener("click", () => {
+				chat.src = "about:blank";
+				chatToggle.style.display = "flex";
+				fullScreenToggle.style.display = "flex";
+			});
+
 			chatToggle.addEventListener("click", () => {
 				chat.src = chat.src !== "about:blank" ? "about:blank" : chatSelect.value;
+
+				if (chat.src !== "about:blank") {
+					chatToggle.style.display = "none";
+					fullScreenToggle.style.display = "none";
+				}
+				else{
+					chatToggle.style.display = "flex";
+					fullScreenToggle.style.display = "flex";
+				}
 			});
+
 			setTimeout(() => {
 				chatToggle.style.opacity = 0;
 			}, 10000);

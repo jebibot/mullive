@@ -10,9 +10,24 @@
 		<link rel="icon" href="/icon.svg" type="image/svg+xml" />
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 		<link rel="manifest" href="/manifest.webmanifest" />
+		<link
+			rel="stylesheet"
+			as="style"
+			crossorigin
+			href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+		/>
 		<style>
+			* {
+				font-family: Pretendard;
+			}
+
 			:root {
 				color-scheme: dark;
+			}
+
+			a {
+				color: white;
+				text-decoration: none;
 			}
 
 			html,
@@ -22,7 +37,7 @@
 				width: 100%;
 				height: 100%;
 				color: white;
-				background-color: black;
+				background: url('/bg.webp') no-repeat center / cover;
 				overflow: hidden;
 			}
 
@@ -37,34 +52,305 @@
 			.box {
 				margin-top: 16px;
 			}
+			#hero {
+				margin-bottom: 4px;
+				text-align: center;
+			}
+
+			#hero img {
+				width: 300px;
+			}
+
+			.description {
+				line-height: 1.5;
+				text-align: center;
+				margin-bottom: 16px;
+				opacity: 0.8;
+			}
+
+			.tag {
+				line-height: 1;
+				font-size: 14px;
+				display: inline-block;
+				padding: 8px 12px;
+				border-radius: 50px;
+				border: 1px solid #ffffff77;
+				background-color: #ffffff11;
+				font-weight: bold;
+			}
+
+			.platforms {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				width: fit-content;
+				padding: 10px 18px;
+				border-radius: 12px;
+				margin: 0 auto 24px;
+				gap: 8px;
+			}
+
+			.underline {
+				border-bottom: 1px solid #ffffff;
+			}
+
+			.info {
+				background-color: rgba(255, 255, 255, 0.07);
+				border: 1px solid #ffffff33;
+				padding: 16px 18px;
+				border-radius: 16px;
+				font-size: 14px;
+				line-height: 1.8;
+			}
+
+			.info-item {
+				display: flex;
+				align-items: center;
+				gap: 4px;
+			}
+
+			.info-example {
+				margin-top: 4px;
+				font-size: 12px;
+				opacity: 0.8;
+			}
+
+			.plugin {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				background-color: rgba(255, 255, 255, 0.07);
+				border: 1px solid #ffffff33;
+				border-radius: 32px;
+				width: fit-content;
+				overflow: hidden;
+				margin: 0px auto 0;
+				padding: 8px;
+			}
+
+			.plugin-img {
+				background-color: rgb(255, 255, 255);
+				border-radius: 32px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				margin-right: 8px;
+				padding: 8px;
+			}
+
+			.plugin-img img {
+				width: 24px;
+				height: 24px;
+			}
+
+			.plugin-info {
+				line-height: 1.5;
+				margin-right: 12px;
+			}
+
+			.plugin-info-title {
+				font-size: 16px;
+				font-weight: bold;
+			}
+
+			.plugin-info-description {
+				font-size: 14px;
+				opacity: 0.8;
+			}
+
+			.footer {
+				text-align: center;
+				margin-top: 24px;
+			}
+
+			.footer-list {
+				display: flex;
+				justify-content: center;
+				gap: 12px;
+				margin-top: 4px;
+			}
+
+			.footer-item {
+				font-size: 12px;
+				opacity: 0.8;
+			}
+
+			#hero {
+				margin-bottom: 4px;
+				text-align: center;
+			}
+
+			#hero img {
+				width: 300px;
+			}
+
+			.description {
+				line-height: 1.5;
+				text-align: center;
+				margin-bottom: 16px;
+				opacity: 0.8;
+			}
+
+			.tag {
+				line-height: 1;
+				font-size: 14px;
+				display: inline-block;
+				padding: 8px 12px;
+				border-radius: 50px;
+				border: 1px solid #ffffff77;
+				background-color: #ffffff11;
+				font-weight: bold;
+			}
+
+			.platforms {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				width: fit-content;
+				padding: 10px 18px;
+				border-radius: 12px;
+				margin: 0 auto 24px;
+				gap: 8px;
+			}
+
+			.underline {
+				border-bottom: 1px solid #ffffff;
+			}
+
+			.info {
+				background-color: rgba(255, 255, 255, 0.07);
+				border: 1px solid #ffffff33;
+				padding: 16px 18px;
+				border-radius: 16px;
+				font-size: 14px;
+				line-height: 1.8;
+			}
+
+			.info-item {
+				display: flex;
+				align-items: center;
+				gap: 4px;
+			}
+
+			.info-example {
+				margin-top: 4px;
+				font-size: 12px;
+				opacity: 0.8;
+			}
+
+			.plugin {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				background-color: rgba(255, 255, 255, 0.07);
+				border: 1px solid #ffffff33;
+				border-radius: 32px;
+				width: fit-content;
+				overflow: hidden;
+				margin: 0px auto 0;
+				padding: 8px;
+			}
+
+			.plugin-img {
+				background-color: rgb(255, 255, 255);
+				border-radius: 32px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				margin-right: 8px;
+				padding: 8px;
+			}
+
+			.plugin-img img {
+				width: 24px;
+				height: 24px;
+			}
+
+			.plugin-info {
+				line-height: 1.5;
+				margin-right: 12px;
+			}
+
+			.plugin-info-title {
+				font-size: 16px;
+				font-weight: bold;
+			}
+
+			.plugin-info-description {
+				font-size: 14px;
+				opacity: 0.8;
+			}
+
+			.footer {
+				text-align: center;
+				margin-top: 24px;
+			}
+
+			.footer-list {
+				display: flex;
+				justify-content: center;
+				gap: 12px;
+				margin-top: 4px;
+			}
+
+			.footer-item {
+				font-size: 12px;
+				opacity: 0.8;
+			}
+
+			.footer-notice {
+				font-size: 10px;
+				opacity: 0.4;
+				margin-top: 20px;
+			}
 		</style>
 	</head>
 	<body>
 		<div class="container">
 			<div>
-				<h1>Mul.Live - 멀티뷰</h1>
-				<div>여러 치지직, 숲(SOOP), 트위치, 유튜브 방송을 함께 볼 수 있습니다.</div>
-				<div>다음을 /로 구분하여 주소 뒤에 붙여주세요.</div>
-				<ul>
-					<li>치지직 UID</li>
-					<li>SOOP 아이디</li>
-					<li>t:Twitch 아이디</li>
-					<li>y:YouTube 핸들, 맞춤 URL, 채널 또는 영상 ID</li>
-				</ul>
-				<div><b>예시:</b> https://mul.live/abcdef1234567890abcdef1234567890/soop/t:twitch/y:@youtube</div>
-				<div class="box">
-					<a id="extension-link" target="_blank"><u>Mul.Live Plus 확장프로그램</u></a
-					>을 설치하면 채팅 등 로그인 기능을 사용할 수 있습니다.
+				<div id="hero"><img src="/mullive.svg" /></div>
+				<div class="description">다양한 플랫폼을 위한 멀티뷰 서비스, <span class="underline">mul.live</span></div>
+				<div class="platforms">
+					<div class="tag">지원 플랫폼</div>
+					<img src="/platform/chzzk.svg" width="24" height="24" />
+					<img src="/platform/soop.svg" width="24" height="24" />
+					<img src="/platform/twitch.svg" width="24" height="24" />
+					<img src="/platform/youtube.svg" width="24" height="24" />
 				</div>
-				<div class="box">
-					본 프로그램은 Twitch, SOOP, 치지직과 관련이 없습니다. 숲, SOOP은 주식회사 숲의<br />등록된 상표입니다. 치지직은 네이버㈜의 등록된
-					상표입니다.
+				<div class="info">
+					다음을 / 로 구분하여 주소 뒤에 붙여주세요!<br />
+					<div class="info-item"><img src="/platform/chzzk.svg" width="20" height="20" /> 치지직 UID</div>
+					<div class="info-item"><img src="/platform/soop.svg" width="20" height="20" /> SOOP ID</div>
+					<div class="info-item"><img src="/platform/twitch.svg" width="20" height="20" /> 트위치 ID ( t: 를 붙여주세요 )</div>
+					<div class="info-item">
+						<img src="/platform/youtube.svg" width="20" height="20" /> 유튜브 핸들, 맞춤 URL, 채널 또는 영상 ID ( y: 를 붙여주세요 )
+					</div>
+					<div class="info-example">예) https://mul.live/치지직_UID/SOOP_ID/t:twitch/y:@youtube</div>
 				</div>
-				<div class="box">
-					<a href="https://www.chz.app/" target="_blank">치즈.앱</a> |
-					<a href="https://github.com/jebibot/mullive" target="_blank">GitHub</a> |
-					<a href="https://discord.gg/9kq3UNKAkz" target="_blank">Discord</a> |
-					<a href="https://www.chz.app/privacy" target="_blank">개인정보처리방침</a>
+				<br />
+				<a class="plugin" id="extension-link" target="_blank">
+					<div class="plugin-img">
+						<img src="/plugin.png" />
+					</div>
+					<div class="plugin-info">
+						<div class="plugin-info-title">mul.live PLUS</div>
+						<div class="plugin-info-description">설치 후 채팅 등 로그인 기능을 사용할 수 있습니다</div>
+					</div>
+				</a>
+				<div class="footer">
+					<a href="https://github.com/jebibot" target="_blank">
+						<img src="/argo.png" width="140px" />
+					</a>
+					<div class="footer-list">
+						<a href="https://github.com/jebibot/mullive" target="_blank" class="footer-item">Github</a>
+						<a href="https://discord.gg/9kq3UNKAkz" class="footer-item">Discord</a>
+						<a href="https://www.chz.app/privacy" class="footer-item">개인정보처리방침</a>
+						<a href="https://www.chz.app/" target="_blank" class="footer-item">치즈.앱</a>
+					</div>
+					<div class="footer-notice">
+						본 프로그램은 Twitch, SOOP, 치지직과 관련이 없습니다.<br />숲, SOOP은 주식회사 숲의 등록된 상표입니다. 치지직은 네이버㈜의
+						등록된 상표입니다.
+					</div>
 				</div>
 			</div>
 		</div>
