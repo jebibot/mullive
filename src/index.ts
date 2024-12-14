@@ -239,10 +239,29 @@ export default {
 				margin: 0;
 			}
 
+			svg {
+				width: 16px;
+				height: 16px;
+				fill: #ccc;
+			}
+
 			.container {
 				display: flex;
+				position: relative;
 				width: 100%;
 				height: 100%;
+			}
+
+			.button {
+				padding: 6px;
+				border-radius: 4px;
+				text-align: center;
+				line-height: 1;
+				cursor: pointer;
+			}
+
+			.button:hover {
+				background-color: #666 !important;
 			}
 
 			#streams {
@@ -267,10 +286,6 @@ export default {
 				width: 350px;
 				height: 100%;
 				position: relative;
-			}
-
-			#chat-container:has(#chat[src="about:blank"]) {
-				display: none;
 			}
 
 			#chat-select-container{
@@ -325,6 +340,7 @@ export default {
 			#chat-close img {
 				width: 18px;
 				height: 18px;
+				outline: none;
 			}
 
 			#chat {
@@ -547,6 +563,35 @@ export default {
 				}
 			}
 
+
+			#chat-container:has(#chat[src="about:blank"]),
+			#chat-container:has(#chat[src="about:blank"]) + #chat-toggle .close,
+			#chat-container:not(:has(#chat[src="about:blank"])) + #chat-toggle .open {
+				display: none;
+			}
+
+			#overlay {
+				display: none;
+				flex-direction: column;
+				position: fixed;
+				bottom: 0;
+				right: 0;
+				width: 350px;
+				border-radius: 8px 8px 0 0;
+				padding: 8px 20px 16px;
+				background-color: #333;
+				font-size: 14px;
+				word-break: keep-all;
+			}
+
+			#overlay-close {
+				margin-left: auto;
+			}
+
+			#overlay-button {
+				margin: 12px 16px 0;
+				background-color: #555;
+			}
 		</style>
 	</head>
 	<body>
