@@ -23,6 +23,7 @@ export interface Env {
 	//
 	// Example binding to a Queue. Learn more at https://developers.cloudflare.com/queues/javascript-apis/
 	// MY_QUEUE: Queue;
+	ASSETS: Fetcher;
 }
 
 interface Stream {
@@ -157,6 +158,10 @@ export default {
 		const hasExtension = request.headers.has('x-has-extension');
 		const parts = url.pathname.split('/');
 		const stream = (await Promise.all(parts.map((s) => parseStream(s, url.hostname, hasExtension)))).filter(isNotUndefined);
+		if (stream.length === 0) {
+			return env.ASSETS.fetch(request);
+		}
+
 		const initialChat = stream.find((s) => hasExtension || !s.extension);
 		const nonce = crypto.randomUUID();
 		const html = `<!DOCTYPE html>
@@ -256,6 +261,7 @@ export default {
 				right: 0;
 				border-radius: 0 0 0 8px;
 				background-color: #333;
+				transition: opacity 150ms ease-in-out;
 			}
 
 			#chat-toggle svg {
@@ -264,8 +270,8 @@ export default {
 				fill: #777;
 			}
 
-			#chat-toggle:hover svg {
-				fill: #999;
+			#chat-toggle:hover {
+				opacity: 1 !important;
 			}
 
 			#overlay {
@@ -299,12 +305,137 @@ export default {
 				cursor: pointer;
 			}
 
-			.button:hover {
-				background-color: #666 !important;
+			.button:hover,
+			#overlay-button:hover {
+				background-color: #666;
 			}
 
 			.box {
 				margin-top: 16px;
+			}
+
+			#hero {
+				margin-bottom: 4px;
+				text-align: center;
+			}
+
+			#hero img {
+				width: 300px;
+			}
+
+			.description{
+				line-height: 1.5;
+				text-align: center;
+				margin-bottom: 16px;
+				opacity: 0.8;
+			}
+
+			.tag {
+				line-height: 1;
+				font-size: 14px;
+				display: inline-block;
+				padding: 8px 12px;
+				border-radius: 50px;
+				border: 1px solid #ffffff77;
+				background-color: #ffffff11;
+				font-weight: bold;
+			}
+
+			.platforms {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				width: fit-content;
+				padding: 10px 18px;
+				border-radius: 12px;
+				margin: 0 auto 24px;
+				gap: 8px;
+			}
+
+			.underline {
+				border-bottom: 1px solid #ffffff;
+			}
+
+			.info{
+				background-color:rgba(255, 255, 255, 0.07);
+				border: 1px solid #ffffff33;
+				padding: 16px 18px;
+				border-radius: 16px;
+				font-size: 14px;
+				line-height: 1.8;
+			}
+
+			.info-item{
+				display: flex;
+				align-items: center;
+				gap: 4px;
+			}
+
+			.info-example{
+				margin-top: 4px;
+				font-size: 12px;
+				opacity: 0.8;
+			}
+
+			.plugin {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				background-color:rgba(255, 255, 255, 0.07);
+				border: 1px solid #ffffff33;
+				border-radius: 32px;
+				width: fit-content;
+				overflow: hidden;
+				margin: 0px auto 0;
+				padding: 8px;
+			}
+
+			.plugin-img { 
+				background-color:rgb(255, 255, 255);
+				border-radius: 32px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				margin-right: 8px;
+				padding: 8px;
+			}
+
+			.plugin-img img {
+				width: 24px;
+				height: 24px;
+			}
+
+			.plugin-info {
+				line-height: 1.5;
+				margin-right: 12px;
+			}
+
+			.plugin-info-title {
+				font-size: 16px;
+				font-weight: bold;
+			}
+
+			.plugin-info-description {
+				font-size: 14px;
+				opacity: 0.8;
+			}
+
+
+			.footer{
+				text-align: center;
+				margin-top: 24px;
+			}
+
+			.footer-list{
+				display: flex;
+				justify-content: center;
+				gap: 12px;
+				margin-top: 4px;
+			}
+
+			.footer-item{
+				font-size: 12px;
+				opacity: 0.8;
 			}
 
 			#hero {
@@ -516,10 +647,6 @@ export default {
 			const extensionUrl = /firefox/i.test(navigator.userAgent)
 				? "https://addons.mozilla.org/addon/mullive/"
 				: "https://chromewebstore.google.com/detail/pahcphmhihleneomklgfbbneokhjiaim";
-			const extensionLink = document.getElementById("extension-link");
-			if (extensionLink != null) {
-				extensionLink.href = extensionUrl;
-			}
 
 			const streams = document.getElementById("streams");
 			const chat = document.getElementById("chat");
@@ -583,6 +710,9 @@ export default {
 			chatToggle.addEventListener("click", () => {
 				chat.src = chat.src !== "about:blank" ? "about:blank" : chatSelect.value;
 			});
+			setTimeout(() => {
+				chatToggle.style.opacity = 0;
+			}, 10000);
 
 			overlayClose.addEventListener("click", closeOverlay);
 			overlayButton.addEventListener("click", () => {
