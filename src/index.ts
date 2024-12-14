@@ -258,10 +258,12 @@ export default {
 				text-align: center;
 				line-height: 1;
 				cursor: pointer;
+				transition: 0.25s;
 			}
 
 			.button:hover {
-				background-color: #666 !important;
+  				box-shadow: inset 0px 0px 999px 5px rgba(255, 255, 255, 0.15);
+  				transition: 0.15s;
 			}
 
 			#streams {
@@ -351,15 +353,15 @@ export default {
 			#fullscreen {
 				position: fixed;
 				top: 6px;
-				right: 56px;
+				right: 48px;
 				border-radius: 48px;
 				background-color:rgba(0, 0, 0, 0.53);
 				border: 1px solid rgba(255, 255, 255, 0.1);
-				width: 48px;
+				width: 40px;
 				display: flex;
 				justify-content: center;
 				align-items: center;
-				height: 48px;
+				height: 40px;
 				transition: opacity 150ms ease-in-out;
 				opacity: 1;
 				animation: fadeOut 0.5s forwards;
@@ -386,11 +388,11 @@ export default {
 				border-radius: 48px;
 				background-color:rgba(0, 0, 0, 0.53);
 				border: 1px solid rgba(255, 255, 255, 0.1);
-				width: 48px;
+				width: 40px;
 				display: flex;
 				justify-content: center;
 				align-items: center;
-				height: 48px;
+				height: 40px;
 				transition: opacity 150ms ease-in-out;
 			}
 
@@ -412,11 +414,7 @@ export default {
 				line-height: 1;
 				cursor: pointer;
 			}
-
-			.button:hover {
-				background-color: #666;
-			}
-
+				
 			.box {
 				margin-top: 16px;
 			}
