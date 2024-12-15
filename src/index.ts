@@ -430,7 +430,7 @@ export default {
 				justify-content: center;
 				background-color: rgba(40, 40, 40, 0.5);
 				backdrop-filter: blur(8px);
-				border: 1px solid #ffffff33;
+				border: 1px solidrgba(9, 4, 4, 0.2);
 				border-radius: 32px;
 				overflow: hidden;
 				margin: 0px auto 0;
@@ -491,12 +491,12 @@ export default {
 				width: 400px;
 				height: 100px;
 				z-index: 1000;
-				background: url("/bg.webp") no-repeat center center;
+				background: url("/movebg.webp") no-repeat center center;
 				display: flex;
 				align-items: center;
 				justify-content: center;
 				border-radius: 120px;
-				animation: slideInFromBottom 0.75s forwards 1s, moveBackgroundImage 5s linear infinite, slideOut 1.5s forwards 4.2s;
+				animation: slideInFromBottom 0.75s forwards 1s, moveBackgroundImage 6s linear infinite, slideOut 1.5s forwards 4.2s;
 				overflow: hidden;
 				box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
 				opacity: 0;
@@ -517,10 +517,10 @@ export default {
 
 			@keyframes moveBackgroundImage {
 				0% {
-					background-position: 100% 100%;
+					background-position: 30% 60%;
 				}
 				100% {
-					background-position: 20% 20%;
+					background-position: 70% 10%;
 				}	
 			
 			}
