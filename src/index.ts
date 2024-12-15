@@ -435,8 +435,7 @@ export default {
 				overflow: hidden;
 				margin: 0px auto 0;
 				padding: 8px;
-				animation: slideInFromBottom 0.75s forwards;
-				animation-delay: 5s;
+				animation: slideInFromBottom 0.75s forwards 5.5s, blink 0.35s 6.5s;
 			}
 
 			.plugin-img {
@@ -497,7 +496,7 @@ export default {
 				align-items: center;
 				justify-content: center;
 				border-radius: 120px;
-				animation: slideInFromBottom 1s forwards 0.5s, moveBackgroundImage 5s linear infinite, slideOut 1.5s forwards 4.2s;
+				animation: slideInFromBottom 0.75s forwards 1s, moveBackgroundImage 5s linear infinite, slideOut 1.5s forwards 4.2s;
 				overflow: hidden;
 				box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
 				opacity: 0;
@@ -506,13 +505,13 @@ export default {
 
 			#mullive-overlay .logo {
 				width: 160px;
-				animation: slideInFromBottom 0.75s forwards 0.25s, slideOut 2s forwards 4.1s;
+				animation: slideInFromBottom 0.75s forwards 1.25s, slideOut 1.75s forwards 4.1s;
 				opacity: 0;
 			}
 
 			#mullive-overlay .argo {
 				width: 80px;
-				animation: slideInFromBottom 0.75s forwards 0.5s, slideOut 0.75s forwards 4s;
+				animation: slideInFromBottom 0.75s forwards 1.5s, slideOut 0.75s forwards 4s;
 				opacity: 0;
 			}
 
@@ -554,6 +553,15 @@ export default {
 				100% {
 					opacity: 1;
 					transform: translateY(0);
+				}
+			}
+
+			@keyframes blink {
+				0%, 100% {
+					background-color: rgba(40, 40, 40, 0.5);
+				}
+				50% {
+					background-color: rgba(255, 255, 255, 0.5);
 				}
 			}
 
