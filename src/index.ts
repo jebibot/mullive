@@ -419,26 +419,6 @@ export default {
 				margin-top: 16px;
 			}
 
-			@keyframes fadeOut {
-				0% {
-					opacity: 1;
-				}
-				100% {
-					opacity: 0;
-				}
-			}
-
-			@keyframes slideInFromBottom {
-				0% {
-					opacity: 0;
-					transform: translateY(150%);
-				}
-				100% {
-					opacity: 1;
-					transform: translateY(0);
-				}
-			}
-
 			.plugin {
 				opacity: 0;
 				position: fixed;
@@ -456,7 +436,7 @@ export default {
 				margin: 0px auto 0;
 				padding: 8px;
 				animation: slideInFromBottom 0.75s forwards;
-				animation-delay: 4s;
+				animation-delay: 5s;
 			}
 
 			.plugin-img {
@@ -517,7 +497,7 @@ export default {
 				align-items: center;
 				justify-content: center;
 				border-radius: 120px;
-				animation: slideInFromBottom 1s forwards, moveBackgroundImage 10s linear infinite, slideOut 1.5s forwards 3.2s;
+				animation: slideInFromBottom 1s forwards 0.5s, moveBackgroundImage 5s linear infinite, slideOut 1.5s forwards 4.2s;
 				overflow: hidden;
 				box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
 				opacity: 0;
@@ -526,22 +506,22 @@ export default {
 
 			#mullive-overlay .logo {
 				width: 160px;
-				animation: slideInFromBottom 0.75s forwards 0.25s, slideOut 2s forwards 3.1s;
+				animation: slideInFromBottom 0.75s forwards 0.25s, slideOut 2s forwards 4.1s;
 				opacity: 0;
 			}
 
 			#mullive-overlay .argo {
 				width: 80px;
-				animation: slideInFromBottom 0.75s forwards 0.5s, slideOut 0.75s forwards 3s;
+				animation: slideInFromBottom 0.75s forwards 0.5s, slideOut 0.75s forwards 4s;
 				opacity: 0;
 			}
 
 			@keyframes moveBackgroundImage {
 				0% {
-					background-position: 20% 20%;
+					background-position: 100% 100%;
 				}
 				100% {
-					background-position: 100% 100%;
+					background-position: 20% 20%;
 				}	
 			
 			}
@@ -554,6 +534,26 @@ export default {
 				100% {
 					transform: translateY(150%);
 					opacity: 0;
+				}
+			}
+
+			@keyframes fadeOut {
+				0% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+
+			@keyframes slideInFromBottom {
+				0% {
+					opacity: 0;
+					transform: translateY(150%);
+				}
+				100% {
+					opacity: 1;
+					transform: translateY(0);
 				}
 			}
 
@@ -756,7 +756,7 @@ export default {
 					showRefreshOverlay();
 				}
 			});
-			
+
 			window.addEventListener("message", (e) => {
 				if (e.origin === "https://play.sooplive.co.kr") {
 					switch (e.data.cmd) {
