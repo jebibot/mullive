@@ -419,10 +419,6 @@ export default {
 				margin-top: 16px;
 			}
 
-			#overlay {
-				display: none;
-			}
-
 			@keyframes fadeOut {
 				0% {
 					opacity: 1;
@@ -570,16 +566,6 @@ export default {
 
 			#overlay {
 				display: none;
-				flex-direction: column;
-				position: fixed;
-				bottom: 0;
-				right: 0;
-				width: 350px;
-				border-radius: 8px 8px 0 0;
-				padding: 8px 20px 16px;
-				background-color: #333;
-				font-size: 14px;
-				word-break: keep-all;
 			}
 
 			#overlay-close {
