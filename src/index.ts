@@ -474,7 +474,7 @@ export default {
 				height: 24px;
 			}
 
-			.plugin-info {
+			#plugin-info {
 				line-height: 1.5;
 				margin-right: 12px;
 				flex: 1;
@@ -616,7 +616,7 @@ export default {
 				<a class="plugin-img" target="_blank" rel="noopener noreferrer" href="${extensionUrl}">
 					<img src="/plugin.png" />
 				</a>
-				<a class="plugin-info" target="_blank" rel="noopener noreferrer" href="${extensionUrl}">
+				<a class="plugin-info" id="plugin-info target="_blank" rel="noopener noreferrer" href="${extensionUrl}">
 					<div class="plugin-info-title">mul.live PLUS</div>
 					<div class="plugin-info-description">설치 후 채팅 등 로그인 기능을 사용할 수 있습니다</div>
 				</a>
@@ -706,7 +706,7 @@ export default {
 			chat.addEventListener("load", adjustLayout);
 			chatSelect.addEventListener("change", (e) => {
 				chat.src = e.target.value;
-			})
+			});
 
 			chatClose.addEventListener("click", () => {
 				chat.src = "about:blank";
@@ -732,17 +732,20 @@ export default {
 			}, 10000);
 
 			overlayClose.addEventListener("click", closeOverlay);
-			overlayButton.addEventListener("click", () => {
-				switch (overlayButton.textContent) {
+			overlayButton?.addEventListener("click", () => {
+				switch (overlayButton?.textContent) {
 					case "확장 프로그램 설치":
 						window.open(extensionUrl);
 						break;
 					case "새로고침":
 						chat.src = chatSelect.value;
 						break;
+					default:
+						break;
 				}
 				closeOverlay();
 			});
+			
 			if (!hasExtension && n && localStorage.getItem("seen-overlay") !== "true") {
 				overlay.style.display = "flex";
 			}
@@ -753,6 +756,7 @@ export default {
 					showRefreshOverlay();
 				}
 			});
+			
 			window.addEventListener("message", (e) => {
 				if (e.origin === "https://play.sooplive.co.kr") {
 					switch (e.data.cmd) {
