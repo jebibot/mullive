@@ -420,9 +420,9 @@ export default {
 			});
 			window.addEventListener("message", (e) => {
 				if (e.origin === "https://play.sooplive.co.kr") {
+					const idx = Array.prototype.findIndex.call(iframes, (f) => e.source === f.contentWindow);
 					switch (e.data.cmd) {
 						case "PonReady":
-							const idx = Array.prototype.findIndex.call(iframes, (f) => e.source === f.contentWindow);
 							if (init && hasExtension && idx === 0) {
 								init = false;
 								chat.src = chatSelect.value;
@@ -439,7 +439,7 @@ export default {
 							}, "https://play.sooplive.co.kr");
 							break;
 						case "PupdateBroadInfo":
-							setName(Array.prototype.findIndex.call(iframes, (f) => e.source === f.contentWindow), e.data.data.nick);
+							setName(idx, e.data.data.nick);
 							break;
 						case "showRefreshOverlay":
 							showRefreshOverlay();
