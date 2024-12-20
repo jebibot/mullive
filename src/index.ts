@@ -65,7 +65,7 @@ const parseStream = async (id: string, parent: string, hasExtension: boolean): P
 		return {
 			type: 'soop',
 			id,
-			player: `https://play.sooplive.co.kr/${id}/direct${hasExtension ? '?showChat=true' : ''}`,
+			player: `https://play.sooplive.co.kr/${id}/direct?fromApi=1`,
 			chat: `https://play.sooplive.co.kr/${id}?vtype=chat`,
 			extension: true,
 		};
@@ -422,10 +422,21 @@ export default {
 				if (e.origin === "https://play.sooplive.co.kr") {
 					switch (e.data.cmd) {
 						case "PonReady":
-							if (init && hasExtension && e.source === iframes[0].contentWindow) {
+							const idx = Array.prototype.findIndex.call(iframes, (f) => e.source === f.contentWindow);
+							if (init && hasExtension && idx === 0) {
 								init = false;
 								chat.src = chatSelect.value;
 							}
+							e.source.postMessage({
+								cmd: "Pload",
+								id: iframes[idx].name,
+								mutePlay: false,
+								showChat: hasExtension,
+								autoPlay: true,
+								isAdShow: true,
+								showQualityBox: true,
+								fromApi: "1",
+							}, "https://play.sooplive.co.kr");
 							break;
 						case "PupdateBroadInfo":
 							setName(Array.prototype.findIndex.call(iframes, (f) => e.source === f.contentWindow), e.data.data.nick);
