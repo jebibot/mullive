@@ -164,6 +164,11 @@ export default {
 
 		const initialChat = stream.find((s) => hasExtension || !s.extension);
 		const nonce = crypto.randomUUID();
+
+		const extensionUrl = /firefox/i.test(navigator.userAgent)
+			? 'https://addons.mozilla.org/addon/mullive/'
+			: 'https://chromewebstore.google.com/detail/pahcphmhihleneomklgfbbneokhjiaim';
+
 		const html = `<!DOCTYPE html>
 <html lang="ko">
 	<head>
@@ -175,16 +180,45 @@ export default {
 		<link rel="icon" href="/favicon.ico" sizes="32x32" />
 		<link rel="icon" href="/icon.svg" type="image/svg+xml" />
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+		<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 		<link rel="manifest" href="/manifest.webmanifest" />
 		<style nonce="${nonce}">
 			*,
 			*::before,
 			*::after {
 				box-sizing: border-box;
+				font-family: Pretendard;
+			}
+
+			select:active,
+			select:focus {
+				outline: none;
 			}
 
 			:root {
 				color-scheme: dark;
+			}
+
+			a {
+				color: white;
+				text-decoration: none;
+			}
+
+			button {
+				background: none;
+				border: none;
+				cursor: pointer;
+				transition: 0.25s;
+			}
+
+			button:active,
+			button:focus {
+				outline: none;
+			}
+
+			button:active {
+				transform: scale(0.95);
+				transition: 0.25s;
 			}
 
 			html,
@@ -194,8 +228,15 @@ export default {
 				width: 100%;
 				height: 100%;
 				color: white;
-				background-color: black;
+				background: black;
 				overflow: hidden;
+			}
+
+			hr {
+				border: 0;
+				height: 1px;
+				background-color: #ffffff33;
+				margin: 0;
 			}
 
 			svg {
@@ -217,10 +258,12 @@ export default {
 				text-align: center;
 				line-height: 1;
 				cursor: pointer;
+				transition: 0.25s;
 			}
 
 			.button:hover {
-				background-color: #666 !important;
+  				box-shadow: inset 0px 0px 999px 5px rgba(255, 255, 255, 0.15);
+  				transition: 0.15s;
 			}
 
 			#streams {
@@ -244,11 +287,61 @@ export default {
 				flex-direction: column;
 				width: 350px;
 				height: 100%;
+				position: relative;
 			}
 
+			#chat-select-container{
+				display: flex;
+				align-items: center;
+				margin: 6px;
+				gap: 6px;
+			}
+
+			#chat-icon {
+				width: 16px;
+				position: absolute;
+				left: 20px;
+				height: 16px;
+			}
+
+
 			#chat-select {
-				margin: 4px 32px 4px 4px;
-				padding: 2px;
+				background: #333;
+				background-image: url("/assets/chevron-down.svg");
+				background-repeat: no-repeat;
+				background-position: right 10px center;
+				background-size: 14px;
+				color: white;
+				border: 1px solid #555;
+				border-radius: 40px;
+				height: 40px;
+				padding: 8px 12px 8px 36px;
+				width: 100%;
+				font-size: 12px;
+				-webkit-appearance: none;
+				appearance: none;
+			}
+
+			#chat-close {
+				width: 40px;
+				height: 40px;
+				display: flex;
+				background-color: #555;
+				border-radius: 40px;
+				justify-content: center;
+				align-items: center;
+				flex-shrink: 0;
+				line-height: 1;
+				transition: 0.25s;
+			}
+
+			#chat-close:hover {
+				background-color: #d13434;
+			}
+
+			#chat-close img {
+				width: 18px;
+				height: 18px;
 				outline: none;
 			}
 
@@ -257,18 +350,221 @@ export default {
 				width: 100%;
 			}
 
+			#fullscreen {
+				position: fixed;
+				top: 6px;
+				right: 48px;
+				border-radius: 48px;
+				background-color:rgba(0, 0, 0, 0.53);
+				border: 1px solid rgba(255, 255, 255, 0.1);
+				width: 40px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 40px;
+				transition: opacity 150ms ease-in-out;
+				opacity: 1;
+				animation: fadeOut 0.5s forwards;
+				animation-delay: 4s;
+				transition: 0.25s;
+			}
+
+			#fullscreen img {
+				width: 20px;
+				height: 20px;
+				margin-bottom: 1px;
+				fill: #777;
+			}
+
+			#fullscreen:hover {
+				opacity: 1 !important;
+				transition: 0.25s;
+			}
+			
 			#chat-toggle {
 				position: fixed;
-				top: 0;
-				right: 0;
-				border-radius: 0 0 0 8px;
-				background-color: #333 !important;
+				top: 6px;
+				right: 6px;
+				border-radius: 48px;
+				background-color:rgba(0, 0, 0, 0.53);
+				border: 1px solid rgba(255, 255, 255, 0.1);
+				width: 40px;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 40px;
 				transition: opacity 150ms ease-in-out;
+			}
+
+			#chat-toggle img {
+				width: 20px;
+				height: 20px;
+				margin-bottom: 1px;
+				fill: #777;
 			}
 
 			#chat-toggle:hover {
 				opacity: 1 !important;
 			}
+
+			.button {
+				padding: 6px;
+				border-radius: 4px;
+				text-align: center;
+				line-height: 1;
+				cursor: pointer;
+			}
+				
+			.box {
+				margin-top: 16px;
+			}
+
+			.plugin {
+				opacity: 0;
+				position: fixed;
+				bottom: 40px;
+				width: 400px;
+				left: calc(50% - 200px);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				background-color: rgba(40, 40, 40, 0.5);
+				backdrop-filter: blur(8px);
+				border: 1px solidrgba(9, 4, 4, 0.2);
+				border-radius: 32px;
+				overflow: hidden;
+				margin: 0px auto 0;
+				padding: 8px;
+				animation: slideInFromBottom 0.75s forwards 5.5s, blink 0.35s 6.5s;
+			}
+
+			.plugin-img {
+				background-color: rgb(255, 255, 255);
+				border-radius: 32px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				margin-right: 8px;
+				padding: 8px;
+			}
+
+			.plugin-img img {
+				width: 24px;
+				height: 24px;
+			}
+
+			#plugin-info {
+				line-height: 1.5;
+				margin-right: 12px;
+				flex: 1;
+			}
+
+			.plugin-close {
+				background-color: #555;
+				border-radius: 32px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				padding: 6px;
+				cursor: pointer;
+			}
+
+			.plugin-close img {
+				width: 16px;
+				height: 16px;
+			}
+
+			.plugin-info-title {
+				font-size: 16px;
+				font-weight: bold;
+			}
+
+			.plugin-info-description {
+				font-size: 14px;
+				opacity: 0.8;
+			}
+
+			#mullive-overlay {
+				position: fixed;
+				left: calc(50% - 200px);
+				bottom: 40px;
+				width: 400px;
+				height: 100px;
+				z-index: 1000;
+				background: url("/movebg.webp") no-repeat center center;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				border-radius: 120px;
+				animation: slideInFromBottom 0.75s forwards 1s, moveBackgroundImage 6s linear infinite, slideOut 1.5s forwards 4.2s;
+				overflow: hidden;
+				box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+				opacity: 0;
+				gap: 20px;
+			}
+
+			#mullive-overlay .logo {
+				width: 160px;
+				animation: slideInFromBottom 0.75s forwards 1.25s, slideOut 1.75s forwards 4.1s;
+				opacity: 0;
+			}
+
+			#mullive-overlay .argo {
+				width: 80px;
+				animation: slideInFromBottom 0.75s forwards 1.5s, slideOut 0.75s forwards 4s;
+				opacity: 0;
+			}
+
+			@keyframes moveBackgroundImage {
+				0% {
+					background-position: 30% 60%;
+				}
+				100% {
+					background-position: 70% 10%;
+				}	
+			
+			}
+
+			@keyframes slideOut {
+				0% {
+					transform: translateY(0);
+					opacity: 1;
+				}
+				100% {
+					transform: translateY(150%);
+					opacity: 0;
+				}
+			}
+
+			@keyframes fadeOut {
+				0% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+
+			@keyframes slideInFromBottom {
+				0% {
+					opacity: 0;
+					transform: translateY(150%);
+				}
+				100% {
+					opacity: 1;
+					transform: translateY(0);
+				}
+			}
+
+			@keyframes blink {
+				0%, 100% {
+					background-color: rgba(40, 40, 40, 0.5);
+				}
+				50% {
+					background-color: rgba(255, 255, 255, 0.5);
+				}
+			}
+
 
 			#chat-container:has(#chat[src="about:blank"]),
 			#chat-container:has(#chat[src="about:blank"]) + #chat-toggle .close,
@@ -278,16 +574,6 @@ export default {
 
 			#overlay {
 				display: none;
-				flex-direction: column;
-				position: fixed;
-				bottom: 0;
-				right: 0;
-				width: 350px;
-				border-radius: 8px 8px 0 0;
-				padding: 8px 20px 16px;
-				background-color: #333;
-				font-size: 14px;
-				word-break: keep-all;
 			}
 
 			#overlay-close {
@@ -306,40 +592,69 @@ export default {
 				${stream.map((s) => `<iframe src=${JSON.stringify(s.player)} name=${JSON.stringify(isNaN(Number(s.id)) ? s.id : `#${s.id}`)} frameborder="0" scrolling="no" allowfullscreen="true"></iframe>`).join('\n\t\t\t\t')}
 			</div>
 			<div id="chat-container">
-				<select id="chat-select" aria-label="채팅">
-					${stream.map((s) => `<option value=${JSON.stringify(s.chat)}${hasExtension || !s.extension ? `>${s.id}` : ` disabled>${s.id} [확장 프로그램 필요]`}</option>`).join('\n\t\t\t\t\t')}
-				</select>
+				<div id="chat-select-container">
+					<img src="/assets/chat.svg" alt="채팅" id="chat-icon" />
+					<select id="chat-select" aria-label="채팅">
+						${stream.map((s) => `<option value=${JSON.stringify(s.chat)}${hasExtension || !s.extension ? `>${s.id}` : ` disabled>${s.id} [확장 프로그램 필요]`}</option>`).join('\n\t\t\t\t\t')}
+					</select>
+					<button id="chat-close" class="button">
+						<img src="/assets/xmark.svg" alt="채팅닫기" />
+					</button>
+				</div>
 				<iframe src=${JSON.stringify((!initialChat?.extension && initialChat?.chat) || 'about:blank')} frameborder="0" scrolling="no" id="chat"></iframe>
 			</div>
-			<div id="chat-toggle" class="button">
-				<svg class="open" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M512 240c0 114.9-114.6 208-256 208c-37.1 0-72.3-6.4-104.1-17.9c-11.9 8.7-31.3 20.6-54.3 30.6C73.6 471.1 44.7 480 16 480c-6.5 0-12.3-3.9-14.8-9.9c-2.5-6-1.1-12.8 3.4-17.4c0 0 0 0 0 0s0 0 0 0s0 0 0 0c0 0 0 0 0 0l.3-.3c.3-.3 .7-.7 1.3-1.4c1.1-1.2 2.8-3.1 4.9-5.7c4.1-5 9.6-12.4 15.2-21.6c10-16.6 19.5-38.4 21.4-62.9C17.7 326.8 0 285.1 0 240C0 125.1 114.6 32 256 32s256 93.1 256 208z"/></svg>
-				<svg class="close" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>
+		</div>
+		<button id="fullscreen" class="button">
+			<img src="/assets/pointing-out.svg" alt="전체화면" />
+		</button>
+		<button id="chat-toggle" class="button">
+			<img src="/assets/chat.svg" alt="채팅" />
+		</button>
+		<div id="overlay">
+			<div class="plugin">
+				<a class="plugin-img" target="_blank" rel="noopener noreferrer" href="${extensionUrl}">
+					<img src="/plugin.png" />
+				</a>
+				<a class="plugin-info" id="plugin-info target="_blank" rel="noopener noreferrer" href="${extensionUrl}">
+					<div class="plugin-info-title">mul.live PLUS</div>
+					<div class="plugin-info-description">설치 후 채팅 등 로그인 기능을 사용할 수 있습니다</div>
+				</a>
+				<div class="plugin-close" id="overlay-close">
+					<img src="/assets/xmark.svg" alt="닫기" />
+				</div>
 			</div>
 		</div>
-		<div id="overlay">
-			<div id="overlay-close" class="button">
-				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>
-			</div>
-			<div id="overlay-content">Mul.Live Plus 확장 프로그램을 설치하면 채팅, 치트키/퀵뷰, 구독 등 로그인 기능을 사용할 수 있습니다.</div>
-			<div id="overlay-button" class="button">확장 프로그램 설치</div>
+		<div id="mullive-overlay">
+				<img class="logo" src="/mullive.svg" alt="Mul.Live" />
+				<img class="argo" src="/argo.png" alt="Argo" />
 		</div>
 		<script type="text/javascript" nonce="${nonce}">
 			let init = true;
 			const hasExtension = ${JSON.stringify(hasExtension)};
-			const extensionUrl = /firefox/i.test(navigator.userAgent)
-				? "https://addons.mozilla.org/addon/mullive/"
-				: "https://chromewebstore.google.com/detail/pahcphmhihleneomklgfbbneokhjiaim";
 
 			const streams = document.getElementById("streams");
 			const chat = document.getElementById("chat");
 			const chatSelect = document.getElementById("chat-select");
 			const chatToggle = document.getElementById("chat-toggle");
+			const chatClose = document.getElementById("chat-close");
+
+			const fullScreenToggle = document.getElementById("fullscreen");
+
 			const overlay = document.getElementById("overlay");
 			const overlayButton = document.getElementById("overlay-button");
 			const overlayClose = document.getElementById("overlay-close");
 			const overlayContent = document.getElementById("overlay-content");
 			const iframes = streams.querySelectorAll("iframe");
 			const n = iframes.length;
+
+			function toggleFullScreen() {
+				if (!document.fullscreenElement) {
+					document.documentElement.requestFullscreen();
+				} else {
+					document.exitFullscreen();
+				}
+			}
+
 			function adjustLayout() {
 				const width = window.innerWidth - 8 - (chat.src !== "about:blank" ? 350 : 0);
 				const height = window.innerHeight - 8;
@@ -373,7 +688,7 @@ export default {
 			}
 
 			function closeOverlay() {
-				overlay.style.display = "";
+				overlay.style.display = "none";
 				localStorage.setItem("seen-overlay", "true");
 			}
 
@@ -383,31 +698,53 @@ export default {
 				overlay.style.display = "flex";
 			}
 
+			fullScreenToggle.addEventListener("click", toggleFullScreen);
+
 			adjustLayout();
 			window.addEventListener("resize", adjustLayout);
 			chat.addEventListener("load", adjustLayout);
 			chatSelect.addEventListener("change", (e) => {
 				chat.src = e.target.value;
-			})
+			});
+
+			chatClose.addEventListener("click", () => {
+				chat.src = "about:blank";
+				chatToggle.style.display = "flex";
+				fullScreenToggle.style.display = "flex";
+			});
+
 			chatToggle.addEventListener("click", () => {
 				chat.src = chat.src !== "about:blank" ? "about:blank" : chatSelect.value;
+
+				if (chat.src !== "about:blank") {
+					chatToggle.style.display = "none";
+					fullScreenToggle.style.display = "none";
+				}
+				else{
+					chatToggle.style.display = "flex";
+					fullScreenToggle.style.display = "flex";
+				}
 			});
+
 			setTimeout(() => {
 				chatToggle.style.opacity = 0;
 			}, 10000);
 
 			overlayClose.addEventListener("click", closeOverlay);
-			overlayButton.addEventListener("click", () => {
-				switch (overlayButton.textContent) {
+			overlayButton?.addEventListener("click", () => {
+				switch (overlayButton?.textContent) {
 					case "확장 프로그램 설치":
 						window.open(extensionUrl);
 						break;
 					case "새로고침":
 						chat.src = chatSelect.value;
 						break;
+					default:
+						break;
 				}
 				closeOverlay();
 			});
+			
 			if (!hasExtension && n && localStorage.getItem("seen-overlay") !== "true") {
 				overlay.style.display = "flex";
 			}
@@ -418,6 +755,7 @@ export default {
 					showRefreshOverlay();
 				}
 			});
+
 			window.addEventListener("message", (e) => {
 				if (e.origin === "https://play.sooplive.co.kr") {
 					const idx = Array.prototype.findIndex.call(iframes, (f) => e.source === f.contentWindow);
