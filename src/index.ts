@@ -65,7 +65,7 @@ const parseStream = async (id: string, parent: string, hasExtension: boolean): P
 		return {
 			type: 'soop',
 			id,
-			player: `https://play.sooplive.co.kr/${id}/direct${hasExtension ? '?showChat=true' : ''}`,
+			player: `https://play.sooplive.co.kr/${id}/direct?fromApi=1`,
 			chat: `https://play.sooplive.co.kr/${id}?vtype=chat`,
 			extension: true,
 		};
@@ -589,16 +589,7 @@ export default {
 	<body>
 		<div class="container">
 			<div id="streams">
-				${
-					stream.length > 0
-						? stream
-								.map(
-									(s) =>
-										`<iframe src=${JSON.stringify(s.player)} name=${JSON.stringify(s.id)} frameborder="0" scrolling="no" allowfullscreen="true"></iframe>`,
-								)
-								.join('\n\t\t\t\t')
-						: `<div class="box">스트림 없음</div>`
-				}
+				${stream.map((s) => `<iframe src=${JSON.stringify(s.player)} name=${JSON.stringify(isNaN(Number(s.id)) ? s.id : `#${s.id}`)} frameborder="0" scrolling="no" allowfullscreen="true"></iframe>`).join('\n\t\t\t\t')}
 			</div>
 			<div id="chat-container">
 				<div id="chat-select-container">
@@ -767,15 +758,26 @@ export default {
 
 			window.addEventListener("message", (e) => {
 				if (e.origin === "https://play.sooplive.co.kr") {
+					const idx = Array.prototype.findIndex.call(iframes, (f) => e.source === f.contentWindow);
 					switch (e.data.cmd) {
 						case "PonReady":
-							if (init && hasExtension && e.source === iframes[0].contentWindow) {
+							if (init && hasExtension && idx === 0) {
 								init = false;
 								chat.src = chatSelect.value;
 							}
+							e.source.postMessage({
+								cmd: "Pload",
+								id: iframes[idx].name,
+								mutePlay: false,
+								showChat: hasExtension,
+								autoPlay: true,
+								isAdShow: true,
+								showQualityBox: true,
+								fromApi: "1",
+							}, "https://play.sooplive.co.kr");
 							break;
 						case "PupdateBroadInfo":
-							setName(Array.prototype.findIndex.call(iframes, (f) => e.source === f.contentWindow), e.data.data.nick);
+							setName(idx, e.data.data.nick);
 							break;
 						case "showRefreshOverlay":
 							showRefreshOverlay();
