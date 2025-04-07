@@ -308,7 +308,7 @@ export default {
 			<div id="chat-container">
 				<select id="chat-select" aria-label="채팅">
 					${stream.map((s) => `<option value=${JSON.stringify(s.chat)}${hasExtension || !s.extension ? `>${s.id}` : ` disabled>${s.id} [확장 프로그램 필요]`}</option>`).join('\n\t\t\t\t\t')}
-					<option value="about:blank">채팅 숨기기</option>
+					<option value="about:blank">(채팅 숨기기)</option>
 				</select>
 				<iframe src=${JSON.stringify((!initialChat?.extension && initialChat?.chat) || 'about:blank')} frameborder="0" scrolling="no" id="chat"></iframe>
 			</div>
