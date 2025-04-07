@@ -308,6 +308,7 @@ export default {
 			<div id="chat-container">
 				<select id="chat-select" aria-label="채팅">
 					${stream.map((s) => `<option value=${JSON.stringify(s.chat)}${hasExtension || !s.extension ? `>${s.id}` : ` disabled>${s.id} [확장 프로그램 필요]`}</option>`).join('\n\t\t\t\t\t')}
+					<option value="about:blank">채팅 숨기기</option>
 				</select>
 				<iframe src=${JSON.stringify((!initialChat?.extension && initialChat?.chat) || 'about:blank')} frameborder="0" scrolling="no" id="chat"></iframe>
 			</div>
@@ -387,7 +388,11 @@ export default {
 			window.addEventListener("resize", adjustLayout);
 			chat.addEventListener("load", adjustLayout);
 			chatSelect.addEventListener("change", (e) => {
-				chat.src = e.target.value;
+				const value = e.target.value;
+				if (value === "about:blank") {
+					e.target.value = chat.src;
+				}
+				chat.src = value;
 			})
 			chatToggle.addEventListener("click", () => {
 				chat.src = chat.src !== "about:blank" ? "about:blank" : chatSelect.value;
