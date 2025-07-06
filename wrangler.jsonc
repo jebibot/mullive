@@ -8,19 +8,19 @@
 	"main": "src/index.ts",
 	"compatibility_date": "2025-07-05",
 	"observability": {
-		"enabled": false
+		"enabled": false,
 	},
 	"workers_dev": false,
 	"preview_urls": false,
 	"routes": [
 		{
 			"pattern": "mul.live",
-			"custom_domain": true
+			"custom_domain": true,
 		},
 		{
 			"pattern": "www.mul.live",
-			"custom_domain": true
-		}
+			"custom_domain": true,
+		},
 	],
 	/**
 	 * Smart Placement
@@ -53,8 +53,8 @@
 		"directory": "./public/",
 		"binding": "ASSETS",
 		"html_handling": "force-trailing-slash",
-		"not_found_handling": "single-page-application"
-	}
+		"not_found_handling": "single-page-application",
+	},
 
 	/**
 	 * Service Bindings (communicate between multiple Workers)
