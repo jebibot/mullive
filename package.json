@@ -6,12 +6,13 @@
 		"deploy": "wrangler deploy",
 		"dev": "wrangler dev",
 		"start": "wrangler dev",
-		"lint": "prettier --check ."
+		"lint": "prettier --check .",
+		"cf-typegen": "wrangler types"
 	},
 	"devDependencies": {
-		"@cloudflare/workers-types": "^4.20241205.0",
-		"prettier": "^3.4.2",
-		"typescript": "^5.7.2",
-		"wrangler": "^3.95.0"
+		"@cloudflare/workers-types": "^4.20250705.0",
+		"prettier": "^3.6.2",
+		"typescript": "^5.8.3",
+		"wrangler": "^4.23.0"
 	}
 }
