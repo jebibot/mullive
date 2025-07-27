@@ -28,6 +28,10 @@ const htmlEnd = `	</body>
 
 const encoder = new TextEncoder();
 const isNotUndefined = <T>(x: T | undefined): x is T => x !== undefined;
+/** Not XSS-safe  */
+const escapeHTML = (str: string) => (typeof str === 'string' ? str.replace(/</g, '&lt;') : '');
+/** Not XSS-safe  */
+const escapeQuote = (str: string) => (typeof str === 'string' ? str.replace(/"/g, '&quot;') : '');
 
 const parseStream = async (id: string, parent: string, hasExtension: boolean): Promise<Stream | undefined> => {
 	if (/^[0-9a-f]{32}$/i.test(id)) {
@@ -288,14 +292,14 @@ export default {
 	<body>
 		<div class="container">
 			<div id="streams">
-				${stream.map((s) => `<iframe src=${JSON.stringify(s.player)} name=${JSON.stringify(isNaN(Number(s.id)) ? s.id : `#${s.id}`)} frameborder="0" scrolling="no" allowfullscreen="true"></iframe>`).join('\n\t\t\t\t')}
+				${stream.map((s) => `<iframe src="${escapeQuote(s.player)}" name="${escapeQuote(isNaN(Number(s.id)) ? s.id : `#${s.id}`)}" frameborder="0" scrolling="no" allowfullscreen="true"></iframe>`).join('\n\t\t\t\t')}
 			</div>
 			<div id="chat-container">
 				<select id="chat-select" aria-label="채팅">
-					${stream.map((s) => `<option value=${JSON.stringify(s.chat)}${hasExtension || !s.extension ? `>${s.id}` : ` disabled>${s.id} [확장 프로그램 필요]`}</option>`).join('\n\t\t\t\t\t')}
+					${stream.map((s) => `<option value="${escapeQuote(s.chat)}"${hasExtension || !s.extension ? `>${escapeHTML(s.id)}` : ` disabled>${escapeHTML(s.id)} [확장 프로그램 필요]`}</option>`).join('\n\t\t\t\t\t')}
 					<option value="about:blank">(채팅 숨기기)</option>
 				</select>
-				<iframe src=${JSON.stringify((!initialChat?.extension && initialChat?.chat) || 'about:blank')} frameborder="0" scrolling="no" id="chat"></iframe>
+				<iframe src="${escapeQuote((!initialChat?.extension && initialChat?.chat) || 'about:blank')}" frameborder="0" scrolling="no" id="chat"></iframe>
 			</div>
 			<div id="chat-toggle" class="button">
 				<svg class="open" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M512 240c0 114.9-114.6 208-256 208c-37.1 0-72.3-6.4-104.1-17.9c-11.9 8.7-31.3 20.6-54.3 30.6C73.6 471.1 44.7 480 16 480c-6.5 0-12.3-3.9-14.8-9.9c-2.5-6-1.1-12.8 3.4-17.4c0 0 0 0 0 0s0 0 0 0s0 0 0 0c0 0 0 0 0 0l.3-.3c.3-.3 .7-.7 1.3-1.4c1.1-1.2 2.8-3.1 4.9-5.7c4.1-5 9.6-12.4 15.2-21.6c10-16.6 19.5-38.4 21.4-62.9C17.7 326.8 0 285.1 0 240C0 125.1 114.6 32 256 32s256 93.1 256 208z"/></svg>
