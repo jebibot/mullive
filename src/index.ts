@@ -54,8 +54,8 @@ const parseStream = async (id: string, parent: string, hasExtension: boolean): P
 		return {
 			type: 'soop',
 			id,
-			player: `https://play.sooplive.co.kr/${id}/direct?fromApi=1`,
-			chat: `https://play.sooplive.co.kr/${id}?vtype=chat`,
+			player: `https://play.sooplive.com/${id}/direct?fromApi=1`,
+			chat: `https://play.sooplive.com/${id}?vtype=chat`,
 			extension: true,
 		};
 	} else if (id.startsWith('y:')) {
@@ -413,7 +413,7 @@ export default {
 				}
 			});
 			window.addEventListener("message", (e) => {
-				if (e.origin === "https://play.sooplive.co.kr") {
+				if (e.origin === "https://play.sooplive.com") {
 					const idx = Array.prototype.findIndex.call(iframes, (f) => e.source === f.contentWindow);
 					switch (e.data.cmd) {
 						case "PonReady":
@@ -430,7 +430,7 @@ export default {
 								isAdShow: true,
 								showQualityBox: true,
 								fromApi: "1",
-							}, "https://play.sooplive.co.kr");
+							}, "https://play.sooplive.com");
 							break;
 						case "PupdateBroadInfo":
 							setName(idx, e.data.data.nick);
@@ -458,7 +458,7 @@ export default {
 			{
 				headers: {
 					'content-type': 'text/html; charset=utf-8',
-					'content-security-policy': `base-uri 'self'; default-src 'self'; script-src 'nonce-${nonce}'; style-src 'nonce-${nonce}'; frame-src 'self' chzzk.naver.com *.chzzk.naver.com *.twitch.tv *.sooplive.co.kr www.youtube.com; object-src 'none'`,
+					'content-security-policy': `base-uri 'self'; default-src 'self'; script-src 'nonce-${nonce}'; style-src 'nonce-${nonce}'; frame-src 'self' chzzk.naver.com *.chzzk.naver.com *.twitch.tv *.sooplive.com www.youtube.com; object-src 'none'`,
 					'strict-transport-security': 'max-age=31536000; includeSubDomains',
 					'x-accel-buffering': 'no',
 					'x-content-type-options': 'nosniff',
