@@ -292,7 +292,7 @@ export default {
 	<body>
 		<div class="container">
 			<div id="streams">
-				${stream.map((s) => `<iframe src="${escapeQuote(s.player)}" name="${escapeQuote(isNaN(Number(s.id)) ? s.id : `#${s.id}`)}" frameborder="0" scrolling="no" allowfullscreen="true"></iframe>`).join('\n\t\t\t\t')}
+				${stream.map((s) => `<iframe src="${escapeQuote(s.player)}" name="${escapeQuote(isNaN(Number(s.id)) ? s.id : `#${s.id}`)}" frameborder="0" scrolling="no" allowfullscreen="true" allow="encrypted-media; local-network-access; loopback-network"></iframe>`).join('\n\t\t\t\t')}
 			</div>
 			<div id="chat-container">
 				<select id="chat-select" aria-label="채팅">
