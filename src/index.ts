@@ -223,9 +223,28 @@ export default {
 				height: 100%;
 			}
 
-			#streams iframe {
+			#streams > * {
 				flex-grow: 1;
 				aspect-ratio: 16 / 9;
+			}
+
+			.notice {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				gap: 12px;
+				padding: 16px;
+				overflow: hidden;
+				border: 2px solid black;
+				background-color: #222;
+				font-size: 14px;
+				text-align: center;
+				word-break: keep-all;
+			}
+
+			.notice .button {
+				background-color: #555;
 			}
 
 			#chat-container {
@@ -313,6 +332,11 @@ export default {
 			<div id="overlay-content">Mul.Live Plus 확장 프로그램을 설치하면 채팅, 치트키/퀵뷰, 구독 등 로그인 기능을 사용할 수 있습니다.</div>
 			<div id="overlay-button" class="button">확장 프로그램 설치</div>
 		</div>
+		<template id="notice">
+			<div class="notice">
+				${hasExtension ? '<div>치지직 방송을 보려면 Mul.Live Plus 확장 프로그램을 최신 버전으로 업데이트해 주세요.</div>' : '<div>치지직 방송을 보려면 Mul.Live Plus 확장 프로그램이 필요합니다.</div>\n\t\t\t\t<div class="button">확장 프로그램 설치</div>'}
+			</div>
+		</template>
 		<script type="text/javascript" nonce="${nonce}">
 			let init = true;
 			const hasExtension = ${JSON.stringify(hasExtension)};
@@ -328,8 +352,9 @@ export default {
 			const overlayButton = document.getElementById("overlay-button");
 			const overlayClose = document.getElementById("overlay-close");
 			const overlayContent = document.getElementById("overlay-content");
-			const iframes = streams.querySelectorAll("iframe");
-			const n = iframes.length;
+			const notice = document.getElementById("notice");
+			const players = streams.children;
+			const n = players.length;
 			function adjustLayout() {
 				const width = window.innerWidth - 8 - (chat.src !== "about:blank" ? 350 : 0);
 				const height = window.innerHeight - 8;
@@ -350,11 +375,11 @@ export default {
 						bestHeight = maxHeight;
 					}
 				}
-				iframes.forEach((f) => {
+				for (const f of players) {
 					f.style.flexGrow = "0";
 					f.style.width = \`\${bestWidth}px\`;
 					f.style.height = \`\${bestHeight}px\`;
-				});
+				}
 			}
 
 			function setName(i, name) {
@@ -371,6 +396,27 @@ export default {
 				overlayContent.textContent = "로그인 후 채팅을 새로고침 해주세요.";
 				overlayButton.textContent = "새로고침";
 				overlay.style.display = "flex";
+			}
+
+			function blockChzzk(frames) {
+				for (const f of frames) {
+					const div = notice.content.firstElementChild.cloneNode(true);
+					div.querySelector(".button")?.addEventListener("click", () => window.open(extensionUrl));
+					f.replaceWith(div);
+				}
+				for (const option of chatSelect.options) {
+					if (option.value.startsWith("https://chzzk.naver.com/") && !option.disabled) {
+						option.disabled = true;
+						option.textContent += " [확장 프로그램 필요]";
+					}
+				}
+				if (chatSelect.selectedOptions[0].disabled) {
+					chatSelect.value = chatSelect.querySelector("option:not(:disabled)").value;
+					if (chat.src !== "about:blank") {
+						chat.src = chatSelect.value;
+					}
+				}
+				adjustLayout();
 			}
 
 			adjustLayout();
@@ -412,9 +458,27 @@ export default {
 					showRefreshOverlay();
 				}
 			});
+			// CHZZK forbids framing by CSP frame-ancestors unless an extension modifies the header.
+			// Only Chromium (detected by navigator.userAgentData) reports the violation to the embedder,
+			// so elsewhere assume it is blocked without our extension.
+			const chzzkPlayers = Array.prototype.filter.call(players, (f) => f.src.startsWith("https://chzzk.naver.com/"));
+			if (navigator.userAgentData) {
+				// The report does not tell which frame, and may come right after the blocked frame's load event.
+				// Ignore reports after that, as they are from navigations inside the frames.
+				const loading = new Set(chzzkPlayers);
+				chzzkPlayers.forEach((f) => f.addEventListener("load", () => setTimeout(() => loading.delete(f), 1000), { once: true }));
+				new ReportingObserver((reports) => {
+					if (loading.size && reports.some((r) => r.body.effectiveDirective === "frame-ancestors" && r.body.blockedURL.startsWith("https://chzzk.naver.com/"))) {
+						blockChzzk(loading);
+						loading.clear();
+					}
+				}, { types: ["csp-violation"], buffered: true }).observe();
+			} else if (!hasExtension) {
+				blockChzzk(chzzkPlayers);
+			}
 			window.addEventListener("message", (e) => {
 				if (e.origin === "https://play.sooplive.com") {
-					const idx = Array.prototype.findIndex.call(iframes, (f) => e.source === f.contentWindow);
+					const idx = Array.prototype.findIndex.call(players, (f) => e.source === f.contentWindow);
 					switch (e.data.cmd) {
 						case "PonReady":
 							if (init && hasExtension && idx === 0) {
@@ -423,7 +487,7 @@ export default {
 							}
 							e.source.postMessage({
 								cmd: "Pload",
-								id: iframes[idx].name,
+								id: players[idx].name,
 								mutePlay: false,
 								showChat: hasExtension,
 								autoPlay: true,
