@@ -334,7 +334,7 @@ export default {
 		</div>
 		<template id="notice">
 			<div class="notice">
-				${hasExtension ? '<div>치지직 방송을 보려면 Mul.Live Plus 확장 프로그램을 최신 버전(v3.2.5 이상, 현재 심사 중)으로 업데이트해 주세요.</div>' : '<div>치지직 방송을 보려면 Mul.Live Plus 확장 프로그램이 필요합니다.</div>\n\t\t\t\t<div class="button">확장 프로그램 설치</div>'}
+				${hasExtension ? '<div>치지직 방송을 보려면 Mul.Live Plus 확장 프로그램을 최신 버전으로 업데이트해 주세요.</div>' : '<div>치지직 방송을 보려면 Mul.Live Plus 확장 프로그램이 필요합니다.</div>\n\t\t\t\t<div class="button">확장 프로그램 설치</div>'}
 			</div>
 		</template>
 		<script type="text/javascript" nonce="${nonce}">
